@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Clase 2: Análisis de Estadísticas Educativas en Colombia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .objectives {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .objectives h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .objectives ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .objectives li {
+            padding: 8px 0;
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        .section {
+            margin: 40px 0;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section h3 {
+            color: #667eea;
+            margin: 25px 0 15px 0;
+            font-size: 1.3rem;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border: 1px solid #4a5568;
+        }
+
+        .code-block .comment {
+            color: #68d391;
+            font-style: italic;
+        }
+
+        .code-block .keyword {
+            color: #f6ad55;
+            font-weight: bold;
+        }
+
+        .code-block .string {
+            color: #fc8181;
+        }
+
+        .code-block .function {
+            color: #63b3ed;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .highlight-box h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .highlight-box p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin: 10px 0;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .concept-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .concept-card h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .concept-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .concept-card li {
+            padding: 5px 0;
+            color: #666;
+            border-left: 3px solid #667eea;
+            padding-left: 15px;
+            margin: 8px 0;
+        }
+
+        .step-indicator {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .data-info {
+            background: #e8f4f8;
+            border: 1px solid #bee3f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .data-info h4 {
+            color: #2b6cb0;
+            margin-bottom: 10px;
+        }
+
+        .data-info p {
+            color: #2c5282;
+            margin: 5px 0;
+        }
+
+        .exercises {
+            background: #fff5b5;
+            border: 2px solid #f6e05e;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .exercises h3 {
+            color: #d69e2e;
+            margin-bottom: 20px;
+        }
+
+        .exercises ol {
+            color: #744210;
+            padding-left: 20px;
+        }
+
+        .exercises li {
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .resources {
+            background: #f0fff4;
+            border: 2px solid #68d391;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .resources h3 {
+            color: #2f855a;
+            margin-bottom: 20px;
+        }
+
+        .resources a {
+            color: #2f855a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .resources a:hover {
+            text-decoration: underline;
+        }
+
+        .checklist {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            color: #2d3748;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .checklist li::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+            top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Demo Clase 2: Análisis de Estadísticas Educativas en Colombia</h1>
+            <p class="subtitle">Aplicando conceptos de Python intermedio para análisis de datos con datasets reales del MEN</p>
+            
+            <div class="objectives">
+                <h3>📋 Temas a cubrir:</h3>
+                <ul>
+                    <li><strong>1. Numpy:</strong> Arrays y operaciones vectorizadas</li>
+                    <li><strong>2. Pandas:</strong> DataFrames, Series e índices</li>
+                    <li><strong>3. Análisis Exploratorio de Datos (EDA):</strong> Los "Big 3" - head(), info(), describe()</li>
+                    <li><strong>4. Filtrado y agregaciones:</strong> loc, iloc, groupby</li>
+                    <li><strong>5. Visualizaciones básicas:</strong> Para entender los datos</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">1</span>Importación de Librerías</h2>
+            <div class="code-block">
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+
+<span class="comment"># Configuración visual</span>
+plt.style.use('seaborn-v0_8-darkgrid')
+sns.set_palette("husl")
+warnings.filterwarnings('ignore')
+
+<span class="comment"># Configuración de pandas para mejor visualización</span>
+pd.set_option('display.max_columns', 20)
+pd.set_option('display.max_rows', 100)
+pd.set_option('display.float_format', '{:.2f}'.format)
+
+<span class="function">print</span>(<span class="string">"✅ Librerías importadas correctamente"</span>)
+<span class="function">print</span>(<span class="string">f"Pandas version: {pd.__version__}"</span>)
+<span class="function">print</span>(<span class="string">f"Numpy version: {np.__version__}"</span>)
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">2</span>Carga de Datos</h2>
+            <div class="data-info">
+                <h4>📂 Dataset: Estadísticas de Educación Preescolar, Básica y Media por Municipio</h4>
+                <p><strong>Fuente:</strong> Ministerio de Educación Nacional de Colombia</p>
+                <p><strong>Datos:</strong> 41 columnas con indicadores educativos por municipio</p>
+                <p><strong>Métricas clave:</strong> Cobertura, deserción, aprobación, reprobación por niveles educativos</p>
+            </div>
+            
+            <div class="code-block">
+<span class="comment"># Cargar el dataset</span>
+file_path = 'MEN_ESTADISTICAS_EN_EDUCACION_EN_PREESCOLAR__B_SICA_Y_MEDIA_POR_MUNICIPIO_20250815.csv'
+
+<span class="comment"># Usando pandas para leer el CSV</span>
+df = pd.read_csv(file_path)
+
+<span class="function">print</span>(<span class="string">"✅ Dataset cargado exitosamente"</span>)
+<span class="function">print</span>(<span class="string">f"Dimensiones del dataset: {df.shape[0]} filas x {df.shape[1]} columnas"</span>)
+
+<span class="comment"># 🔧 LIMPIEZA DE DATOS - ¡Paso crucial!</span>
+<span class="function">print</span>(<span class="string">"\n🔧 LIMPIEZA DE DATOS:"</span>)
+
+<span class="comment"># Función para convertir a numérico, manejando errores</span>
+<span class="keyword">def</span> <span class="function">convertir_numerico</span>(serie):
+    <span class="keyword">return</span> pd.to_numeric(serie, errors='coerce')
+
+<span class="comment"># Columnas que deberían ser numéricas</span>
+columnas_numericas = [
+    'POBLACIÓN_5_16', 'COBERTURA_NETA', 'DESERCIÓN', 'APROBACIÓN', 'REPROBACIÓN'
+]
+
+<span class="comment"># Convertir columnas a numéricas</span>
+<span class="keyword">for</span> col <span class="keyword">in</span> columnas_numericas:
+    <span class="keyword">if</span> col <span class="keyword">in</span> df.columns:
+        df[col] = convertir_numerico(df[col])
+        <span class="function">print</span>(<span class="string">f"✅ {col} convertida a numérica"</span>)
+            </div>
+            
+            <div class="highlight-box">
+                <h3>🎓 Concepto Clave: Limpieza de Datos</h3>
+                <p>Los datos reales siempre necesitan limpieza. CSV puede importar números como texto, causando errores en análisis posteriores.</p>
+                <p><strong>Solución:</strong> <code>pd.to_numeric(errors='coerce')</code> convierte valores inválidos a NaN</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">3</span>Los "Big 3" del Análisis Exploratorio</h2>
+            <div class="highlight-box">
+                <h3>📊 Los tres métodos más importantes para entender tus datos</h3>
+                <p>Estos comandos te dan el 80% de la información que necesitas sobre cualquier dataset</p>
+            </div>
+
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h4>1. df.head()</h4>
+                    <p>Ver las primeras filas del dataset</p>
+                    <div class="code-block">
+df.head()  <span class="comment"># Primeras 5 filas</span>
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h4>2. df.info()</h4>
+                    <p>Información general del dataset</p>
+                    <div class="code-block">
+df.info()  <span class="comment"># Tipos de datos, nulos</span>
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h4>3. df.describe()</h4>
+                    <p>Estadísticas descriptivas</p>
+                    <div class="code-block">
+df.describe()  <span class="comment"># Media, std, percentiles</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">4</span>Análisis de Estructura de Datos</h2>
+            <h3>🔍 Entendiendo nuestro dataset</h3>
+            
+            <div class="code-block">
+<span class="comment"># Explorar las columnas disponibles</span>
+<span class="function">print</span>(<span class="string">"📋 COLUMNAS DISPONIBLES:"</span>)
+<span class="keyword">for</span> i, col <span class="keyword">in</span> enumerate(df.columns, 1):
+    <span class="function">print</span>(<span class="string">f"{i:2d}. {col}"</span>)
+
+<span class="function">print</span>(<span class="string">f"\n📊 Total de columnas: {len(df.columns)}"</span>)
+            </div>
+
+            <div class="code-block">
+<span class="comment"># Verificar valores únicos en columnas categóricas</span>
+columnas_categoricas = ['DEPARTAMENTO', 'ETC']
+
+<span class="keyword">for</span> col <span class="keyword">in</span> columnas_categoricas:
+    <span class="function">print</span>(<span class="string">f"\n📍 {col}:"</span>)
+    <span class="function">print</span>(<span class="string">f"   - Valores únicos: {df[col].nunique()}"</span>)
+    <span class="function">print</span>(<span class="string">f"   - Top 5 más frecuentes:"</span>)
+    <span class="function">print</span>(df[col].value_counts().head())
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">5</span>Trabajando con NumPy</h2>
+            <div class="highlight-box">
+                <h3>⚡ Operaciones vectorizadas para mayor eficiencia</h3>
+                <p>NumPy puede ser hasta 100x más rápido que Python puro</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># Comparación de velocidad: Python vs NumPy</span>
+<span class="keyword">import</span> time
+
+<span class="comment"># Usar la columna de población</span>
+poblacion = df['POBLACIÓN_5_16'].fillna(0).values
+
+<span class="comment"># Método Python tradicional</span>
+start = time.time()
+resultado_python = [x * 2 <span class="keyword">for</span> x <span class="keyword">in</span> poblacion]
+tiempo_python = time.time() - start
+
+<span class="comment"># Método NumPy (vectorizado)</span>
+start = time.time()
+resultado_numpy = poblacion * 2
+tiempo_numpy = time.time() - start
+
+<span class="function">print</span>(<span class="string">f"🐍 Python: {tiempo_python:.6f} segundos"</span>)
+<span class="function">print</span>(<span class="string">f"⚡ NumPy: {tiempo_numpy:.6f} segundos"</span>)
+<span class="function">print</span>(<span class="string">f"🚀 NumPy es {tiempo_python/tiempo_numpy:.1f}x más rápido!"</span>)
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">6</span>Pandas: Series vs DataFrame</h2>
+            
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h4>📈 Pandas Series</h4>
+                    <p>Una columna con índice</p>
+                    <div class="code-block">
+<span class="comment"># Serie de tasas de deserción</span>
+desercion_serie = df['DESERCIÓN']
+<span class="function">print</span>(<span class="string">f"Tipo: {type(desercion_serie)}"</span>)
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h4>📊 Pandas DataFrame</h4>
+                    <p>Múltiples columnas con índice compartido</p>
+                    <div class="code-block">
+<span class="comment"># DataFrame subset</span>
+columnas = ['MUNICIPIO', 'DEPARTAMENTO', 'COBERTURA_NETA']
+df_subset = df[columnas].copy()
+<span class="function">print</span>(<span class="string">f"Shape: {df_subset.shape}"</span>)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">7</span>Indexación y Filtrado</h2>
+            <div class="highlight-box">
+                <h3>🔍 loc vs iloc - Las herramientas fundamentales</h3>
+                <p><strong>iloc:</strong> Indexación por posición (números) | <strong>loc:</strong> Indexación por etiqueta</p>
+            </div>
+
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h4>🔢 iloc - Por POSICIÓN</h4>
+                    <div class="code-block">
+<span class="comment"># Primera fila</span>
+df.iloc[0]
+
+<span class="comment"># Primeras 3 filas, columnas 2-5</span>
+df.iloc[0:3, 2:5]
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h4>🏷️ loc - Por ETIQUETA</h4>
+                    <div class="code-block">
+<span class="comment"># Filas 0-2, columnas específicas</span>
+df.loc[0:2, ['MUNICIPIO', 'COBERTURA_NETA']]
+
+<span class="comment"># Filtrado con condiciones</span>
+df.loc[(df['DEPARTAMENTO'] == 'Antioquia') & 
+       (df['COBERTURA_NETA'] > 90)]
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">8</span>Filtrado Avanzado</h2>
+            <h3>🎯 Aplicando múltiples condiciones</h3>
+            
+            <div class="code-block">
+<span class="comment"># Municipios destacados</span>
+municipios_destacados = df[
+    (df['COBERTURA_NETA'] > 85) & 
+    (df['DESERCIÓN'] < 3) &
+    (df['POBLACIÓN_5_16'] > 1000)
+]
+
+<span class="function">print</span>(<span class="string">f"✅ Encontrados {len(municipios_destacados)} municipios destacados"</span>)
+
+<span class="comment"># Uso de isin() para filtrar múltiples valores</span>
+departamentos_interes = ['Antioquia', 'Valle del Cauca', 'Cundinamarca']
+df_departamentos = df[df['DEPARTAMENTO'].isin(departamentos_interes)]
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">9</span>GroupBy - Agregaciones Poderosas</h2>
+            <div class="highlight-box">
+                <h3>📊 La herramienta más importante para análisis agregado</h3>
+                <p>GroupBy te permite responder preguntas como: "¿Cuál es el promedio por grupo?"</p>
+                <p><strong>⚠️ Clave:</strong> Siempre manejar valores nulos en datos reales</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># Agrupar por departamento y calcular estadísticas</span>
+<span class="comment"># ✅ Las columnas ya están limpias y son numéricas</span>
+stats_por_depto = df.groupby('DEPARTAMENTO').agg({
+    'POBLACIÓN_5_16': 'sum',
+    'COBERTURA_NETA': 'mean',
+    'DESERCIÓN': 'mean',
+    'APROBACIÓN': 'mean',
+    'MUNICIPIO': 'count'  <span class="comment"># Contar municipios</span>
+}).round(2)
+
+<span class="comment"># ✅ Filtrar departamentos con datos válidos</span>
+stats_por_depto = stats_por_depto.dropna(subset=['Población_Total'])
+stats_por_depto = stats_por_depto.sort_values('Población_Total', ascending=False)
+
+<span class="comment"># Estadísticas múltiples para una columna</span>
+cobertura_stats = df.groupby('DEPARTAMENTO')['COBERTURA_NETA'].agg([
+    'count', 'mean', 'median', 'std', 'min', 'max'
+]).round(2)
+            </div>
+            
+            <div class="concept-card">
+                <h4>🎓 Buenas Prácticas con GroupBy</h4>
+                <ul>
+                    <li>Siempre verificar tipos de datos antes de agrupar</li>
+                    <li>Usar <code>.dropna()</code> para filtrar valores nulos</li>
+                    <li>Validar resultados antes de operaciones como <code>nlargest()</code></li>
+                    <li>Redondear resultados para mejor legibilidad</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">🔟</span>Visualizaciones Básicas</h2>
+            <h3>📊 Visualizando nuestros hallazgos</h3>
+            
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h4>📈 Histogramas</h4>
+                    <p>Distribución de variables</p>
+                    <div class="code-block">
+df['COBERTURA_NETA'].hist(bins=30)
+plt.title('Distribución de Cobertura')
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h4>📊 Scatter plots</h4>
+                    <p>Relación entre variables</p>
+                    <div class="code-block">
+plt.scatter(df['COBERTURA_NETA'], 
+           df['DESERCIÓN'])
+plt.title('Cobertura vs Deserción')
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h4>📋 Boxplots</h4>
+                    <p>Comparar distribuciones</p>
+                    <div class="code-block">
+coberturas_niveles.boxplot()
+plt.title('Cobertura por Nivel')
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h4>🔥 Heatmaps</h4>
+                    <p>Matriz de correlación</p>
+                    <div class="code-block">
+sns.heatmap(correlacion, annot=True)
+plt.title('Correlaciones')
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">11</span>Análisis Avanzado</h2>
+            <h3>🎯 Aplicando todo lo aprendido</h3>
+            
+            <div class="code-block">
+<span class="comment"># Crear categorías de cobertura</span>
+<span class="keyword">def</span> <span class="function">categorizar_cobertura</span>(cobertura):
+    <span class="keyword">if</span> cobertura >= 95:
+        <span class="keyword">return</span> <span class="string">'Excelente'</span>
+    <span class="keyword">elif</span> cobertura >= 85:
+        <span class="keyword">return</span> <span class="string">'Buena'</span>
+    <span class="keyword">elif</span> cobertura >= 75:
+        <span class="keyword">return</span> <span class="string">'Regular'</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> <span class="string">'Baja'</span>
+
+<span class="comment"># Aplicar categorización</span>
+df['CATEGORIA_COBERTURA'] = df['COBERTURA_NETA'].apply(categorizar_cobertura)
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step-indicator">12</span>Insights y Conclusiones</h2>
+            <div class="highlight-box">
+                <h3>💡 Principales hallazgos del análisis</h3>
+                <p>Estadísticas clave, mejores y peores indicadores, correlaciones importantes</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># Resumen ejecutivo con datos limpios</span>
+total_municipios = len(df)
+<span class="comment"># ✅ Usar solo datos válidos para los cálculos</span>
+df_calculo = df.dropna(subset=['POBLACIÓN_5_16', 'COBERTURA_NETA', 'DESERCIÓN'])
+
+total_estudiantes = df_calculo['POBLACIÓN_5_16'].sum()
+cobertura_promedio = df_calculo['COBERTURA_NETA'].mean()
+desercion_promedio = df_calculo['DESERCIÓN'].mean()
+
+<span class="comment"># ✅ Mejores y peores municipios (datos válidos)</span>
+<span class="keyword">if</span> <span class="keyword">not</span> df_calculo.empty:
+    mejor_cobertura = df_calculo.nlargest(1, 'COBERTURA_NETA')
+    peor_cobertura = df_calculo.nsmallest(1, 'COBERTURA_NETA')
+
+<span class="comment"># Exportar resultados</span>
+municipios_destacados.to_csv('municipios_destacados_educacion.csv')
+stats_por_depto.to_csv('estadisticas_por_departamento.csv')
+            </div>
+            
+            <div class="highlight-box">
+                <h3>🎓 Lección Importante: Datos Reales Requieren Validación</h3>
+                <p>En este demo aprendimos una lección crucial del mundo real: <strong>los datos nunca están perfectos</strong></p>
+                <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                    <p><strong>Problemas encontrados:</strong></p>
+                    <ul style="margin: 10px 0; padding-left: 20px; color: white;">
+                        <li>Columnas numéricas importadas como texto (object)</li>
+                        <li>Valores faltantes que causan errores en operaciones</li>
+                        <li>Necesidad de validación antes de cada análisis</li>
+                    </ul>
+                    <p><strong>Soluciones aplicadas:</strong></p>
+                    <ul style="margin: 10px 0; padding-left: 20px; color: white;">
+                        <li><code>pd.to_numeric(errors='coerce')</code> para conversión segura</li>
+                        <li><code>.dropna()</code> para filtrar valores válidos</li>
+                        <li>Validaciones con <code>if not df.empty:</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercises">
+            <h3>🎯 Ejercicios para la Clase</h3>
+            <p><strong>📝 Preguntas para explorar con los estudiantes:</strong></p>
+            <ol>
+                <li><strong>¿Cuál es el departamento con mayor desigualdad en cobertura entre sus municipios?</strong></li>
+                <li><strong>¿Existe correlación entre el tamaño de la población y los indicadores educativos?</strong></li>
+                <li><strong>¿Qué municipios tienen alta cobertura pero alta deserción? (casos atípicos)</strong></li>
+                <li><strong>¿Cómo varía la cobertura entre los diferentes niveles educativos?</strong></li>
+                <li><strong>¿Qué patrones podemos identificar en los municipios rurales vs urbanos?</strong></li>
+            </ol>
+        </div>
+
+        <div class="resources">
+            <h3>📚 Recursos y Referencias</h3>
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h4>🔗 Enlaces útiles</h4>
+                    <ul style="list-style: disc; padding-left: 20px;">
+                        <li><a href="https://pandas.pydata.org/docs/" target="_blank">Documentación Pandas</a></li>
+                        <li><a href="https://numpy.org/doc/" target="_blank">Documentación NumPy</a></li>
+                        <li><a href="https://www.datos.gov.co/" target="_blank">Datos Abiertos Colombia</a></li>
+                        <li><a href="https://www.mineducacion.gov.co/" target="_blank">Ministerio de Educación Nacional</a></li>
+                    </ul>
+                </div>
+                
+                <div class="concept-card">
+                    <h4>💡 Conceptos clave aprendidos</h4>
+                    <div class="checklist">
+                        <ul>
+                            <li>Carga y exploración de datos reales</li>
+                            <li>Los "Big 3" del EDA: head(), info(), describe()</li>
+                            <li>NumPy arrays y operaciones vectorizadas</li>
+                            <li>Pandas Series vs DataFrame</li>
+                            <li>Indexación con loc e iloc</li>
+                            <li>Filtrado y agrupaciones con groupby</li>
+                            <li>Visualizaciones básicas para entender los datos</li>
+                            <li><strong>Limpieza y validación de datos reales</strong></li>
+                            <li><strong>Manejo robusto de valores nulos y tipos de datos</strong></li>
+                            <li><strong>Buenas prácticas para análisis en producción</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h2 style="color: white;">🚀 ¡Lista para la Demo!</h2>
+            <p style="font-size: 1.2rem; opacity: 0.95; margin: 20px 0;">
+                Este notebook está diseñado para guiarte paso a paso en tu demo en vivo, 
+                aplicando todos los conceptos de la clase 2 con datos reales del sector educativo colombiano.
+            </p>
+            <p style="font-size: 1rem; opacity: 0.9;">
+                <strong>Tip:</strong> Practica ejecutando cada celda antes de la clase para familiarizarte con los resultados.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

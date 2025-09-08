@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipulación de Datos con Pandas - Clase 3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 40px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .title-slide h2 {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .title-slide .info {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #34495e;
+            margin: 30px 0 20px 0;
+        }
+
+        .objectives-list {
+            display: grid;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .objective-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .objective-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.1);
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .comparison-card {
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .comparison-card.sheets {
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+            color: white;
+        }
+
+        .comparison-card.python {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        .feature-card h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .code-example {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border: 1px solid #4a5568;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            white-space: pre;
+        }
+
+        .code-example .comment {
+            color: #68d391;
+            font-style: italic;
+        }
+
+        .code-example .keyword {
+            color: #f093fb;
+            font-weight: bold;
+        }
+
+        .code-example .string {
+            color: #ffd93d;
+        }
+
+        .code-example .function {
+            color: #4fd1c7;
+        }
+
+        .demo-section {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 25px;
+            margin: 60px 0;
+        }
+
+        .demo-title {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .workshop-section {
+            text-align: center;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 25px;
+            margin: 60px 0;
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .process-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 180px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .process-step::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: #667eea;
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        .current-step {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            box-shadow: 0 10px 25px rgba(253, 203, 110, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+                margin: 20px 0;
+            }
+            
+            .title-slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container">
+        <button class="nav-btn" onclick="previousSlide()">◀ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ▶</button>
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide">
+            <h1>🧹 Manipulación de Datos con Pandas</h1>
+            <h2>Clase 3 - Analítica de Datos</h2>
+            <div class="info">
+                <div style="margin-top: 20px;">Julian Eduardo Garzon Giraldo, MsC</div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Agenda de Hoy -->
+        <div class="slide">
+            <h1>🎯 ¿Qué lograremos hoy?</h1>
+            <div style="display: flex; justify-content: space-around; margin: 50px 0; gap: 20px;">
+                <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; width: 300px; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🔄</div>
+                    <h2 style="color: white; margin-bottom: 15px; font-size: 1.3rem;">REPASO</h2>
+                    <div style="text-align: left; font-size: 0.85rem;">
+                        <p style="margin: 5px 0;">• Recordar clase anterior</p>
+                        <p style="margin: 5px 0;">• Google Sheets práctico</p>
+                        <p style="margin: 5px 0;">• Identificar limitaciones</p>
+                        <p style="margin: 5px 0;">• Motivar el cambio a Python</p>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; width: 300px; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">👀</div>
+                    <h2 style="color: white; margin-bottom: 15px; font-size: 1.3rem;">IDENTIFICAR</h2>
+                    <div style="text-align: left; font-size: 0.85rem;">
+                        <p style="margin: 5px 0;">• Detectar problemas visualmente</p>
+                        <p style="margin: 5px 0;">• Missing values y duplicados</p>
+                        <p style="margin: 5px 0;">• Tipos de datos incorrectos</p>
+                        <p style="margin: 5px 0;">• Valores atípicos obvios</p>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; width: 300px; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🐍</div>
+                    <h2 style="color: white; margin-bottom: 15px; font-size: 1.3rem;">PYTHON</h2>
+                    <div style="text-align: left; font-size: 0.85rem;">
+                        <p style="margin: 5px 0;">• Limpieza automatizada</p>
+                        <p style="margin: 5px 0;">• Transformaciones masivas</p>
+                        <p style="margin: 5px 0;">• Tidy data principles</p>
+                        <p style="margin: 5px 0;">• GroupBy avanzado</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; margin-top: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: #2c3e50; margin-bottom: 10px;">🎯 Objetivo de la Clase</h3>
+                <p style="color: #666; font-size: 1rem;">
+                    Entender por qué Python es superior para manipular datos a gran escala y dominar técnicas de limpieza
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: El Proceso Completo -->
+        <div class="slide">
+            <h1>🗺️ El Proceso Completo de Analítica de Datos</h1>
+            <div style="margin: 40px 0;">
+                <div class="process-flow" style="flex-direction: column; align-items: stretch;">
+                    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
+                        <div class="process-step">
+                            <strong>🎯 ENTENDER</strong><br>
+                            El Problema de Negocio<br>
+                            <span style="font-size: 2rem;">✅</span>
+                        </div>
+                        <div class="process-step">
+                            <strong>📥 OBTENER</strong><br>
+                            Y Cargar Datos<br>
+                            <span style="font-size: 2rem;">✅</span>
+                        </div>
+                        <div class="process-step current-step">
+                            <strong>🧹 LIMPIAR</strong><br>
+                            Y Preparar Datos<br>
+                            <span style="font-size: 2rem;">🎯</span>
+                        </div>
+                        <div class="process-step">
+                            <strong>🔍 EXPLORAR</strong><br>
+                            Y Analizar (EDA)<br>
+                            <span style="font-size: 2rem;">⏳</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+                        <div class="process-step">
+                            <strong>📊 VISUALIZAR</strong><br>
+                            Patrones y Tendencias<br>
+                            <span style="font-size: 2rem;">⏳</span>
+                        </div>
+                        <div class="process-step">
+                            <strong>💡 GENERAR</strong><br>
+                            Insights y Conclusiones<br>
+                            <span style="font-size: 2rem;">⏳</span>
+                        </div>
+                        <div class="process-step">
+                            <strong>🎤 COMUNICAR</strong><br>
+                            Resultados<br>
+                            <span style="font-size: 2rem;">⏳</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                <h2 style="color: white; margin-bottom: 15px;">🎯 Estamos Aquí: Limpieza de Datos</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 20px;">
+                    Sin datos limpios, todo el análisis posterior será <strong>incorrecto o engañoso</strong>
+                </p>
+                <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                    <strong>Principio fundamental:</strong> "Basura entra → Basura sale"
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Por Qué la Limpieza es Crítica -->
+        <div class="slide">
+            <h1>⚡ ¿Por Qué la Limpieza es CRÍTICA?</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🗑️ "Basura Entra → Basura Sale"</h2>
+                    <p style="font-size: 1.3rem;">Sin datos limpios, todo el análisis posterior será incorrecto</p>
+                </div>
+                
+                <div class="feature-grid">
+                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>❌ Missing Values</h3>
+                        <p><strong>Problema:</strong> Cálculos de ventas incorrectos</p>
+                        <p><strong>Ejemplo:</strong> "El promedio mensual es $2M" (pero faltaban 10 días de datos)</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>❌ Duplicados</h3>
+                        <p><strong>Problema:</strong> KPIs inflados artificialmente</p>
+                        <p><strong>Ejemplo:</strong> "Vendimos $5M" (pero contamos la misma venta 3 veces)</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>❌ Tipos Incorrectos</h3>
+                        <p><strong>Problema:</strong> Gráficos que no se pueden crear</p>
+                        <p><strong>Ejemplo:</strong> Fechas como texto impiden análisis temporal</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>❌ Outliers sin Detectar</h3>
+                        <p><strong>Problema:</strong> Tendencias distorsionadas</p>
+                        <p><strong>Ejemplo:</strong> Un error de $999,999 en una venta de $99</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Repaso Clase Anterior -->
+        <div class="slide">
+            <h1>🔄 Repaso: ¿Qué Vimos la Clase Pasada?</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 20px;">📊 Python Intermedio para Datos</h2>
+                    <p style="font-size: 1.2rem;">Aprendimos los fundamentos de pandas y numpy</p>
+                </div>
+                
+                <div class="comparison-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px;">
+                        <h3>📚 Pandas Básico</h3>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px;">
+                            <li style="padding: 5px 0;">• read_csv() para cargar datos</li>
+                            <li style="padding: 5px 0;">• head(), info(), describe() para explorar</li>
+                            <li style="padding: 5px 0;">• Indexing y filtering básico</li>
+                            <li style="padding: 5px 0;">• Series vs DataFrame</li>
+                        </ul>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px;">
+                        <h3>🔍 Exploración Inicial</h3>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px;">
+                            <li style="padding: 5px 0;">• Entender la estructura del dataset</li>
+                            <li style="padding: 5px 0;">• Identificar tipos de datos</li>
+                            <li style="padding: 5px 0;">• Detectar posibles problemas</li>
+                            <li style="padding: 5px 0;">• Los "Big 3" comandos esenciales</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h3 style="color: white; margin-bottom: 15px;">🎯 Hoy Continuamos:</h3>
+                    <p style="font-size: 1.2rem;">Vamos a limpiar y preparar esos datos que exploramos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Demo en Google Sheets -->
+        <div class="slide">
+            <div class="demo-section">
+                <div class="demo-title">📊 Demo en Google Sheets</div>
+                <div style="font-size: 1.5rem; margin-bottom: 40px;">Repaso Práctico: Explorando Nuestro Dataset</div>
+                
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 40px; border-radius: 20px; margin: 40px 0;">
+                    <h2 style="color: white; margin-bottom: 30px;">🔍 Recordando con Herramientas Visuales</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-bottom: 40px;">
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">🎯 Lo Que Haremos</h3>
+                            <ul style="list-style: none; color: white; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• Cargar nuestro dataset del proyecto</li>
+                                <li style="padding: 5px 0;">• Usar funciones: COUNTIF, SUM, AVERAGE</li>
+                                <li style="padding: 5px 0;">• Aplicar filtros y ordenamiento</li>
+                                <li style="padding: 5px 0;">• Contar filas y columnas</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">❓ Preguntas Guía</h3>
+                            <ul style="list-style: none; color: white; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• ¿Cuántas filas y columnas tenemos?</li>
+                                <li style="padding: 5px 0;">• ¿Qué representan estas columnas?</li>
+                                <li style="padding: 5px 0;">• ¿Los nombres son descriptivos?</li>
+                                <li style="padding: 5px 0;">• ¿Qué limitaciones encontramos?</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">🤔 Reflexión Crítica</h3>
+                            <p style="font-size: 1.2rem; color: white;">
+                                ¿Qué pasaría si tuviéramos <strong>100,000 filas</strong> en lugar de 100?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.3); padding: 25px; border-radius: 15px; font-size: 1.2rem;">
+                    <strong>📝 Objetivo:</strong> Identificar visualmente los problemas antes de programar
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Identificación Visual de Problemas -->
+        <div class="slide">
+            <h1>👀 Identificando Problemas Visualmente</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 15px; display: inline-block;">
+                        <h2 style="color: white; margin: 0;">🔍 ¿Qué buscar en los datos "sucios"?</h2>
+                    </div>
+                </div>
+
+                <div class="feature-grid">
+                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🕳️ Celdas Vacías</h3>
+                        <p>Missing values que se ven como espacios en blanco</p>
+                        <p><strong>Problema:</strong> Afectan cálculos y promedios</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🎭 Datos "Raros"</h3>
+                        <p>Valores que no encajan con el patrón</p>
+                        <p><strong>Ejemplo:</strong> "N/A", "null", "---" en lugar de números</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📅 Fechas Inconsistentes</h3>
+                        <p>Diferentes formatos en la misma columna</p>
+                        <p><strong>Ejemplo:</strong> "2024-01-15" y "15/01/24"</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>💰 Números como Texto</h3>
+                        <p>Precios con símbolos y formatos</p>
+                        <p><strong>Ejemplo:</strong> "$1,250.00" en lugar de 1250.00</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>👥 Duplicados Obvios</h3>
+                        <p>Filas que se repiten exactamente</p>
+                        <p><strong>Problema:</strong> Inflan artificialmente los resultados</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #dc7633 0%, #ba4a00 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📊 Valores Extremos</h3>
+                        <p>Outliers que se ven sospechosos</p>
+                        <p><strong>Ejemplo:</strong> Venta de $999,999,999 en productos baratos</p>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">📝 Actividad Práctica</h2>
+                    <p style="font-size: 1.2rem;">Crearemos una lista colaborativa de todos los problemas que identifiquemos visualmente</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Intentando Limpiar en Google Sheets -->
+        <div class="slide">
+            <h1>🧹 Intentando Limpiar en Google Sheets</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 20px; border-radius: 15px; display: inline-block;">
+                        <h2 style="color: white; margin: 0;">⚠️ Experimentemos las limitaciones</h2>
+                    </div>
+                </div>
+                
+                <div class="feature-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🔍 Búsqueda de Duplicados</h3>
+                        <div style="text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <p>• Formato condicional para resaltar</p>
+                            <p>• Filtros avanzados</p>
+                            <p style="color: #ffd93d;"><strong>Limitación:</strong> ¿Y si son 50,000 filas?</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🔧 Valores Faltantes</h3>
+                        <div style="text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <p>• Buscar y reemplazar celdas vacías</p>
+                            <p>• Decidir qué valor poner</p>
+                            <p style="color: #ffd93d;"><strong>Limitación:</strong> ¿Cómo automatizar la decisión?</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📅 Tipos de Datos</h3>
+                        <div style="text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <p>• Cambiar formato de celdas</p>
+                            <p>• Limpiar caracteres especiales</p>
+                            <p style="color: #ffd93d;"><strong>Limitación:</strong> ¡Es muy tedioso!</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>💰 Precios con Símbolos</h3>
+                        <div style="text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <p>• Eliminar $ y comas manualmente</p>
+                            <p>• Convertir a números</p>
+                            <p style="color: #ffd93d;"><strong>Limitación:</strong> ¡Propenso a errores!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">💡 Conclusión de esta Sección</h2>
+                    <p style="font-size: 1.3rem;">
+                        Google Sheets nos permite <strong>VER</strong> los problemas, pero no es eficiente para <strong>SOLUCIONARLOS</strong> a escala
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Python Como Herramienta -->
+        <div class="slide">
+            <h1>🐍 Python: La Herramienta Adecuada</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 20px; display: inline-block;">
+                        <h2 style="color: white; margin-bottom: 15px;">⚡ Haremos en segundos lo que tomó minutos en Sheets</h2>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin: 30px 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border-radius: 10px; overflow: hidden;">
+                        <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <tr>
+                                <th style="padding: 20px; text-align: left; font-weight: 600;">Aspecto</th>
+                                <th style="padding: 20px; text-align: center; font-weight: 600;">Google Sheets</th>
+                                <th style="padding: 20px; text-align: center; font-weight: 600;">Python</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: white;">
+                                <td style="padding: 15px 20px; font-weight: bold;">Visualización</td>
+                                <td style="padding: 15px 20px; text-align: center;">✅ Excelente</td>
+                                <td style="padding: 15px 20px; text-align: center;">⚠️ Requiere código</td>
+                            </tr>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 15px 20px; font-weight: bold;">Escalabilidad</td>
+                                <td style="padding: 15px 20px; text-align: center;">❌ Limitado (1M celdas)</td>
+                                <td style="padding: 15px 20px; text-align: center;">✅ Sin límites prácticos</td>
+                            </tr>
+                            <tr style="background: white;">
+                                <td style="padding: 15px 20px; font-weight: bold;">Automatización</td>
+                                <td style="padding: 15px 20px; text-align: center;">❌ Muy manual</td>
+                                <td style="padding: 15px 20px; text-align: center;">✅ Completamente automático</td>
+                            </tr>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 15px 20px; font-weight: bold;">Reproducibilidad</td>
+                                <td style="padding: 15px 20px; text-align: center;">❌ Difícil de replicar</td>
+                                <td style="padding: 15px 20px; text-align: center;">✅ Total reproducibilidad</td>
+                            </tr>
+                            <tr style="background: white;">
+                                <td style="padding: 15px 20px; font-weight: bold;">Velocidad</td>
+                                <td style="padding: 15px 20px; text-align: center;">❌ Lento para datos grandes</td>
+                                <td style="padding: 15px 20px; text-align: center;">✅ Muy rápido</td>
+                            </tr>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 15px 20px; font-weight: bold;">Documentación</td>
+                                <td style="padding: 15px 20px; text-align: center;">❌ Se pierde fácilmente</td>
+                                <td style="padding: 15px 20px; text-align: center;">✅ Código autodocumentado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Filosofía de Trabajo</h2>
+                    <p style="font-size: 1.3rem;">
+                        <strong>Sheets para explorar y entender.</strong><br>
+                        <strong>Python para limpiar y analizar.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Limpieza con Pandas -->
+        <div class="slide">
+            <h1>🧹 Limpieza de Datos con Pandas</h1>
+            <div style="margin: 40px 0;">
+                <div class="feature-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🔍 Detección de Missing Values</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.85rem;">
+<span class="comment"># Detectar valores faltantes</span>
+df.<span class="function">info</span>()
+df.<span class="function">isnull</span>().<span class="function">sum</span>()
+df.<span class="function">describe</span>()
+
+<span class="comment"># Visualizar patrones</span>
+df.<span class="function">isnull</span>().<span class="function">sum</span>().<span class="function">plot</span>(kind=<span class="string">'bar'</span>)</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🧽 Manejo de Missing Values</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.85rem;">
+<span class="comment"># Diferentes estrategias</span>
+df.<span class="function">fillna</span>(method=<span class="string">'ffill'</span>)  <span class="comment"># Forward fill</span>
+df.<span class="function">fillna</span>(df.<span class="function">mean</span>())       <span class="comment"># Imputación con media</span>
+df.<span class="function">dropna</span>()                <span class="comment"># Eliminar filas</span>
+df.<span class="function">fillna</span>(0)               <span class="comment"># Llenar con cero</span></div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🔄 Eliminación de Duplicados</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.85rem;">
+<span class="comment"># Detectar duplicados</span>
+df.<span class="function">duplicated</span>().<span class="function">sum</span>()
+df[df.<span class="function">duplicated</span>()]
+
+<span class="comment"># Eliminar duplicados</span>
+df.<span class="function">drop_duplicates</span>()
+df.<span class="function">drop_duplicates</span>(subset=[<span class="string">'column'</span>])</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📊 Cambio de Tipos de Datos</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.85rem;">
+<span class="comment"># Cambiar tipos</span>
+df[<span class="string">'fecha'</span>] = pd.<span class="function">to_datetime</span>(df[<span class="string">'fecha'</span>])
+df[<span class="string">'precio'</span>] = df[<span class="string">'precio'</span>].<span class="function">astype</span>(<span class="string">'float'</span>)
+df[<span class="string">'categoria'</span>] = df[<span class="string">'categoria'</span>].<span class="function">astype</span>(<span class="string">'category'</span>)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Transformaciones de Datos -->
+        <div class="slide">
+            <h1>🔧 Transformaciones de Datos</h1>
+            <div style="margin: 40px 0;">
+                <div class="feature-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>➕ Creación de Nuevas Columnas</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.8rem;">
+<span class="comment"># Nuevas columnas calculadas</span>
+df[<span class="string">'total'</span>] = df[<span class="string">'precio'</span>] * df[<span class="string">'cantidad'</span>]
+df[<span class="string">'categoria_precio'</span>] = df[<span class="string">'precio'</span>].<span class="function">apply</span>(
+    <span class="keyword">lambda</span> x: <span class="string">'Alto'</span> <span class="keyword">if</span> x > 100 <span class="keyword">else</span> <span class="string">'Bajo'</span>
+)
+df[<span class="string">'mes'</span>] = df[<span class="string">'fecha'</span>].dt.month</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🧹 Limpieza de Strings</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.8rem;">
+<span class="comment"># Limpiar texto</span>
+df[<span class="string">'producto'</span>] = df[<span class="string">'producto'</span>].str.<span class="function">strip</span>()
+df[<span class="string">'producto'</span>] = df[<span class="string">'producto'</span>].str.<span class="function">upper</span>()
+df[<span class="string">'precio_str'</span>] = df[<span class="string">'precio_str'</span>].str.<span class="function">replace</span>(<span class="string">'$'</span>, <span class="string">''</span>)
+df[<span class="string">'precio_str'</span>] = df[<span class="string">'precio_str'</span>].str.<span class="function">replace</span>(<span class="string">','</span>, <span class="string">''</span>)</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📅 Manejo de Fechas</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.8rem;">
+<span class="comment"># Trabajar con fechas</span>
+df[<span class="string">'fecha'</span>] = pd.<span class="function">to_datetime</span>(df[<span class="string">'fecha'</span>], 
+                           format=<span class="string">'%d/%m/%Y'</span>)
+df[<span class="string">'año'</span>] = df[<span class="string">'fecha'</span>].dt.year
+df[<span class="string">'dia_semana'</span>] = df[<span class="string">'fecha'</span>].dt.<span class="function">day_name</span>()</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🎯 Filtrado y Selección</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.8rem;">
+<span class="comment"># Filtrar datos</span>
+ventas_altas = df[df[<span class="string">'precio'</span>] > 100]
+productos_tech = df[df[<span class="string">'categoria'</span>] == <span class="string">'Tecnología'</span>]
+ventas_2024 = df[df[<span class="string">'fecha'</span>] >= <span class="string">'2024-01-01'</span>]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Principios de Tidy Data -->
+        <div class="slide">
+            <h1>📐 Principios de Tidy Data</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 20px;">🎯 ¿Qué son los "Tidy Data"?</h2>
+                    <p style="font-size: 1.2rem;">Datos organizados de forma consistente y fácil de analizar</p>
+                </div>
+                
+                <div class="feature-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 12px; text-align: left;">
+                        <h3>1️⃣ Cada Variable = Una Columna</h3>
+                        <div style="margin-top: 15px; font-size: 0.9rem;">
+                            <p style="margin: 5px 0;"><strong>✅ Correcto:</strong> columnas separadas para 'precio' y 'cantidad'</p>
+                            <p style="margin: 5px 0;"><strong>❌ Incorrecto:</strong> 'precio_cantidad' con valores mixtos</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 12px; text-align: left;">
+                        <h3>2️⃣ Cada Observación = Una Fila</h3>
+                        <div style="margin-top: 15px; font-size: 0.9rem;">
+                            <p style="margin: 5px 0;"><strong>✅ Correcto:</strong> cada venta en una fila diferente</p>
+                            <p style="margin: 5px 0;"><strong>❌ Incorrecto:</strong> múltiples ventas en una sola fila</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 12px; text-align: left;">
+                        <h3>3️⃣ Cada Tipo = Una Tabla</h3>
+                        <div style="margin-top: 15px; font-size: 0.9rem;">
+                            <p style="margin: 5px 0;"><strong>✅ Correcto:</strong> tabla de ventas, tabla de productos</p>
+                            <p style="margin: 5px 0;"><strong>❌ Incorrecto:</strong> mezclar ventas con inventario</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 25px; border-radius: 12px; text-align: left;">
+                        <h3>4️⃣ Un Valor = Una Celda</h3>
+                        <div style="margin-top: 15px; font-size: 0.9rem;">
+                            <p style="margin: 5px 0;"><strong>✅ Correcto:</strong> una fecha por celda</p>
+                            <p style="margin: 5px 0;"><strong>❌ Incorrecto:</strong> "2024-01-15 hasta 2024-01-20"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Workshop -->
+        <div class="slide">
+            <div class="workshop-section">
+                <div style="font-size: 3rem; margin-bottom: 30px;">💻</div>
+                <div class="demo-title">Práctica Guiada</div>
+                <div style="font-size: 1.5rem; margin-bottom: 40px;">Limpiando el Dataset E-commerce</div>
+                
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 40px; border-radius: 20px; margin: 40px 0;">
+                    <h2 style="color: white; margin-bottom: 30px;">🎯 Vamos a limpiar el mismo dataset que exploramos en Sheets</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-bottom: 40px;">
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">🎯 Lo Que Haremos</h3>
+                            <ul style="list-style: none; color: white; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• Cargar el dataset con pandas</li>
+                                <li style="padding: 5px 0;">• Detectar problemas programáticamente</li>
+                                <li style="padding: 5px 0;">• Aplicar soluciones automatizadas</li>
+                                <li style="padding: 5px 0;">• Validar los resultados</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">🔗 Conexiones</h3>
+                            <ul style="list-style: none; color: white; font-size: 1rem;">
+                                <li style="padding: 5px 0;"><em>"¿Recuerdan las celdas vacías? Así las detectamos..."</em></li>
+                                <li style="padding: 5px 0;"><em>"¿Los precios con $? Así los convertimos..."</em></li>
+                                <li style="padding: 5px 0;"><em>"¿Las fechas raras? Así las normalizamos..."</em></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.3); padding: 25px; border-radius: 15px; font-size: 1.2rem;">
+                    <strong>⚡ Resultado:</strong> Tendremos datos limpios listos para el análisis de la próxima clase
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: GroupBy Preview -->
+        <div class="slide">
+            <h1>🔢 Introducción a GroupBy</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">GroupBy: La base para KPIs de negocio</h2>
+                    <p style="font-size: 1.1rem;">Ahora que tenemos datos limpios, podemos hacer análisis que Sheets no maneja</p>
+                </div>
+                
+                <div class="feature-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📊 Análisis Por Categoría</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.8rem;">
+<span class="comment"># Ventas promedio por categoría</span>
+df.<span class="function">groupby</span>(<span class="string">'categoria'</span>)[<span class="string">'precio'</span>].<span class="function">mean</span>()
+
+<span class="comment"># Total de ventas por categoría</span>  
+df.<span class="function">groupby</span>(<span class="string">'categoria'</span>)[<span class="string">'total'</span>].<span class="function">sum</span>()</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🌍 Análisis Por Región</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.8rem;">
+<span class="comment"># Ventas por región y categoría</span>
+df.<span class="function">groupby</span>([<span class="string">'region'</span>, <span class="string">'categoria'</span>]).<span class="function">agg</span>({
+    <span class="string">'precio'</span>: <span class="string">'mean'</span>,
+    <span class="string">'cantidad'</span>: <span class="string">'sum'</span>,
+    <span class="string">'total'</span>: <span class="string">'sum'</span>
+})</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📅 Análisis Temporal</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.8rem;">
+<span class="comment"># Ventas por mes</span>
+df.<span class="function">groupby</span>(df[<span class="string">'fecha'</span>].dt.month)[<span class="string">'total'</span>].<span class="function">sum</span>()
+
+<span class="comment"># Tendencia mensual</span>
+df.<span class="function">set_index</span>(<span class="string">'fecha'</span>).<span class="function">resample</span>(<span class="string">'M'</span>)[<span class="string">'total'</span>].<span class="function">sum</span>()</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🎯 KPIs Empresariales</h3>
+                        <div class="code-example" style="text-align: left; font-size: 0.8rem;">
+<span class="comment"># Ticket promedio por cliente</span>
+df.<span class="function">groupby</span>(<span class="string">'cliente_id'</span>)[<span class="string">'total'</span>].<span class="function">mean</span>()
+
+<span class="comment"># Productos más vendidos</span>
+df.<span class="function">groupby</span>(<span class="string">'producto'</span>)[<span class="string">'cantidad'</span>].<span class="function">sum</span>().<span class="function">sort_values</span>(ascending=<span class="keyword">False</span>)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Tarea para Casa -->
+        <div class="slide">
+            <h1>🏠 Tarea para Casa</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">📝 Limpieza del Dataset del Proyecto</h2>
+                    <p style="font-size: 1.1rem;">Apliquen todo lo aprendido al proyecto de e-commerce</p>
+                </div>
+                
+                <div class="feature-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📋 Entregables</h3>
+                        <div style="text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <p>• <strong>Jupyter Notebook documentado</strong> con proceso completo</p>
+                            <p>• <strong>Dataset limpio</strong> resultante (CSV)</p>
+                            <p>• <strong>Reporte de limpieza</strong> (1-2 páginas)</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>🎯 Proceso Requerido</h3>
+                        <div style="text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <p>• 1. Exploración visual en Google Sheets</p>
+                            <p>• 2. Identificación de problemas</p>
+                            <p>• 3. Limpieza programática en Python</p>
+                            <p>• 4. Documentación de decisiones</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>📊 Contenido del Reporte</h3>
+                        <div style="text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <p>• Problemas identificados</p>
+                            <p>• Estrategias aplicadas</p>
+                            <p>• Datos eliminados/modificados</p>
+                            <p>• Impacto en el análisis</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+                        <h3>✅ Criterios de Evaluación</h3>
+                        <div style="text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <p>• <strong>60%</strong> - Correctitud del proceso</p>
+                            <p>• <strong>25%</strong> - Justificación de decisiones</p>
+                            <p>• <strong>15%</strong> - Documentación clara</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <strong>⏰ Fecha de Entrega:</strong> [Definir fecha] - Los datos limpios serán la base de las próximas 10 semanas
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Próxima Clase -->
+        <div class="slide">
+            <h1>🔮 Próxima Clase: Análisis Exploratorio (EDA)</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 20px; display: inline-block;">
+                        <h2 style="color: white; margin-bottom: 15px;">🔍 Clase 4: Análisis Exploratorio de Datos</h2>
+                        <p style="font-size: 1.2rem;">Descubriremos patrones ocultos en nuestros datos limpios</p>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px;">
+                    <div>
+                        <h2>🎯 Lo Que Veremos</h2>
+                        <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                            <ul style="list-style: none;">
+                                <li style="padding: 6px 0;">• Metodología sistemática de EDA</li>
+                                <li style="padding: 6px 0;">• Estadística descriptiva aplicada</li>
+                                <li style="padding: 6px 0;">• Detección de outliers y patrones</li>
+                                <li style="padding: 6px 0;">• Generación de hipótesis de negocio</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>🛠️ Herramientas</h2>
+                        <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                            <ul style="list-style: none;">
+                                <li style="padding: 6px 0;">• Pandas para análisis numérico</li>
+                                <li style="padding: 6px 0;">• Matplotlib para visualizaciones</li>
+                                <li style="padding: 6px 0;">• Seaborn para gráficos avanzados</li>
+                                <li style="padding: 6px 0;">• Técnicas de correlación</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <strong>💡 Prepárense:</strong> Traigan sus datasets limpios - los usaremos para descubrir insights reales
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Resumen -->
+        <div class="slide">
+            <h1>📋 Resumen de Hoy</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div>
+                    <h2>🧠 Conceptos Clave:</h2>
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">✅ Proceso completo de analítica</li>
+                            <li style="padding: 6px 0;">✅ Importancia crítica de la limpieza</li>
+                            <li style="padding: 6px 0;">✅ Google Sheets vs Python</li>
+                            <li style="padding: 6px 0;">✅ Principios de Tidy Data</li>
+                            <li style="padding: 6px 0;">✅ GroupBy para KPIs</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>💻 Habilidades Prácticas:</h2>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">✅ Detectar problemas visualmente</li>
+                            <li style="padding: 6px 0;">✅ Limpiar missing values y duplicados</li>
+                            <li style="padding: 6px 0;">✅ Transformar tipos de datos</li>
+                            <li style="padding: 6px 0;">✅ Crear nuevas columnas calculadas</li>
+                            <li style="padding: 6px 0;">✅ Aplicar principios de datos ordenados</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px; display: inline-block;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Lo Más Importante</h2>
+                    <p style="font-size: 1.3rem; margin: 0;">
+                        Ahora entiendes por qué <strong>Python es superior</strong> para manipular datos.<br>
+                        <span style="font-size: 1.1rem; opacity: 0.9;">¡Sheets para explorar, Python para analizar! 🚀</span>
+                    </p>
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin-top: 40px; text-align: center;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">💡 Mensaje Final</h3>
+                <p style="color: #666; font-size: 1.1rem;">
+                    Hoy construiste los <strong>cimientos</strong> de tu análisis. La próxima semana construiremos los <strong>insights</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.style.display = 'none');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'flex';
+            slides[currentSlide].style.animation = 'fadeInUp 0.6s ease-out';
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            showSlide(currentSlide - 1);  
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+        
+        // Initialize
+        showSlide(0);
+        
+        // Auto-animate elements when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all cards and elements
+        document.querySelectorAll('.feature-card, .comparison-card, .objective-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

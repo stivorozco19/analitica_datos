@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metodología EDA - Clase 5</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 40px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 80vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide:first-child {
+            display: flex;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .title-slide h2 {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .title-slide .info {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #34495e;
+            margin: 30px 0 20px 0;
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        .feature-card h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .code-example {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border: 1px solid #4a5568;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            white-space: pre;
+        }
+
+        /* Distribution Charts Styles */
+        .distributions-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .distribution-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(116, 185, 255, 0.3);
+        }
+
+        .distribution-card h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-container canvas {
+            border-radius: 5px;
+        }
+
+        .distribution-info {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .distribution-examples {
+            font-size: 0.8rem;
+            margin-top: 8px;
+            opacity: 0.8;
+        }
+
+        .methodology-steps {
+            display: grid;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .methodology-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 25px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border-left: 5px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .methodology-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.15);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .process-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 180px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .process-step::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: #667eea;
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+                margin: 20px 0;
+            }
+            
+            .title-slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .comparison-grid, .distributions-container {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container">
+        <button class="nav-btn" onclick="previousSlide()">◀ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ▶</button>
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide">
+            <h1>🔍 Metodología EDA Sistemática</h1>
+            <h2>Clase 5 - Análisis Uni/Bi/Multivariado</h2>
+            <div class="info">
+                <div style="margin-top: 20px;">Julian Eduardo Garzon Giraldo, MsC</div>
+                <div style="margin-top: 10px; font-size: 1.1rem; opacity: 0.8;">Semana 5 - Preparación para Entrega 1</div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Construyendo sobre Clase 4 -->
+        <div class="slide">
+            <h1>🏗️ Construyendo sobre Clase 4</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; display: inline-block;">
+                        <h2 style="color: white; margin: 0;">✅ Lo que ya dominamos</h2>
+                    </div>
+                </div>
+                
+                <div class="comparison-grid">
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px;">
+                        <h3>🧠 Conceptos Claros</h3>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px;">
+                            <li style="padding: 5px 0;">• Qué es EDA y por qué es crítico</li>
+                            <li style="padding: 5px 0;">• Estructura básica de datos</li>
+                            <li style="padding: 5px 0;">• Limpieza básica de datos</li>
+                            <li style="padding: 5px 0;">• GroupBy básico</li>
+                        </ul>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px;">
+                        <h3>🎯 Lo que haremos hoy</h3>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px;">
+                            <li style="padding: 5px 0;">• Metodología sistemática EDA</li>
+                            <li style="padding: 5px 0;">• Análisis univariado profundo</li>
+                            <li style="padding: 5px 0;">• Técnicas de análisis bivariado</li>
+                            <li style="padding: 5px 0;">• Introducción a multivariado</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🚀 Objetivo de Hoy</h2>
+                    <p style="font-size: 1.2rem;">Dominar metodología sistemática que genere insights accionables</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Los 3 Niveles de Análisis -->
+        <div class="slide">
+            <h1>📊 Los 3 Niveles de Análisis</h1>
+            <div style="margin: 40px 0;">
+                <div class="process-flow" style="justify-content: space-around; margin-bottom: 50px;">
+                    <div class="process-step">
+                        <strong>🔍 UNIVARIADO</strong><br>
+                        Una variable a la vez<br>
+                        <span style="font-size: 1.3rem; opacity: 0.9;">"¿Cómo se comporta X?"</span>
+                    </div>
+                    <div class="process-step">
+                        <strong>🔗 BIVARIADO</strong><br>
+                        Relación entre dos variables<br>
+                        <span style="font-size: 1.3rem; opacity: 0.9;">"¿Cómo se relacionan X e Y?"</span>
+                    </div>
+                    <div class="process-step">
+                        <strong>🌐 MULTIVARIADO</strong><br>
+                        Patrones complejos<br>
+                        <span style="font-size: 1.3rem; opacity: 0.9;">"¿Cómo influye Z en X-Y?"</span>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px;">
+                    <h3 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">💡 Analogía: Análisis Médico</h3>
+                    <div class="comparison-grid" style="gap: 20px;">
+                        <div style="text-align: center;">
+                            <p style="margin: 10px 0;"><strong>🔍 Univariado</strong></p>
+                            <p style="color: #666;">"¿Cuál es tu presión arterial?"</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="margin: 10px 0;"><strong>🔗 Bivariado</strong></p>
+                            <p style="color: #666;">"¿Cómo se relaciona presión con ejercicio?"</p>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <p style="margin: 10px 0;"><strong>🌐 Multivariado</strong></p>
+                        <p style="color: #666;">"¿Esa relación cambia según la edad?"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Tipos de Distribuciones -->
+        <div class="slide">
+            <h1>📈 Tipos de Distribuciones</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 30px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Fundamento del Análisis Univariado</h2>
+                    <p style="font-size: 1.2rem;">Entender la FORMA de los datos es clave para interpretarlos correctamente</p>
+                </div>
+
+                <div class="distributions-container">
+                    <div class="distribution-card">
+                        <h3>🔵 NORMAL</h3>
+                        <div class="chart-container">
+                            <canvas id="normalChart" width="220" height="120"></canvas>
+                        </div>
+                        <div class="distribution-info">
+                            Media = Mediana<br>Simétrica
+                        </div>
+                        <div class="distribution-examples">
+                            Ej: Altura, calificaciones
+                        </div>
+                    </div>
+
+                    <div class="distribution-card">
+                        <h3>🔴 SESGADA DERECHA</h3>
+                        <div class="chart-container">
+                            <canvas id="skewedChart" width="220" height="120"></canvas>
+                        </div>
+                        <div class="distribution-info">
+                            Media > Mediana<br>Cola larga
+                        </div>
+                        <div class="distribution-examples">
+                            Ej: Ingresos, ventas
+                        </div>
+                    </div>
+
+                    <div class="distribution-card">
+                        <h3>🟣 BIMODAL</h3>
+                        <div class="chart-container">
+                            <canvas id="bimodalChart" width="220" height="120"></canvas>
+                        </div>
+                        <div class="distribution-info">
+                            Dos picos<br>Dos poblaciones
+                        </div>
+                        <div class="distribution-examples">
+                            Ej: Edad, urbano-rural
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border-left: 5px solid #ffc107; margin-top: 30px;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">⚠️ Importante para Análisis</h4>
+                    <p style="color: #856404; margin: 0;">
+                        <strong>Normal:</strong> Usar media y desviación estándar<br>
+                        <strong>Sesgada:</strong> Usar mediana y percentiles<br>
+                        <strong>Bimodal:</strong> Separar en grupos antes de analizar
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Framework Análisis Univariado -->
+        <div class="slide">
+            <h1>🔍 Framework Análisis Univariado</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; margin-bottom: 40px; text-align: center;">
+                    <h2 style="color: white; margin-bottom: 15px;">📋 Checklist Sistemático</h2>
+                    <p style="font-size: 1.1rem;">5 preguntas fundamentales para cada variable</p>
+                </div>
+
+                <div class="methodology-steps">
+                    <div class="methodology-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h3>📊 DISTRIBUCIÓN</h3>
+                            <p><strong>Pregunta:</strong> ¿Normal, sesgada, bimodal?</p>
+                            <div class="code-example" style="margin-top: 10px;">df['variable'].hist(bins=30)
+plt.title('Distribución de la variable')</div>
+                        </div>
+                    </div>
+
+                    <div class="methodology-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h3>📍 CENTRALIDAD</h3>
+                            <p><strong>Pregunta:</strong> ¿Media vs mediana? ¿Hay sesgo?</p>
+                            <div class="code-example" style="margin-top: 10px;">media = df['variable'].mean()
+mediana = df['variable'].median()
+print(f"Media: {media:.2f}, Mediana: {mediana:.2f}")</div>
+                        </div>
+                    </div>
+
+                    <div class="methodology-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h3>🚨 OUTLIERS</h3>
+                            <p><strong>Pregunta:</strong> ¿Valores extremos? ¿Son errores?</p>
+                            <div class="code-example" style="margin-top: 10px;">df['variable'].plot(kind='box')
+# Identificar outliers automáticamente</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Análisis Bivariado -->
+        <div class="slide">
+            <h1>🔗 Análisis Bivariado - Tipos de Relaciones</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 3 Combinaciones Principales</h2>
+                    <p style="font-size: 1.2rem;">Cada combinación requiere técnica específica</p>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <thead style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white;">
+                            <tr>
+                                <th style="padding: 15px; text-align: left;">Variable 1</th>
+                                <th style="padding: 15px; text-align: left;">Variable 2</th>
+                                <th style="padding: 15px; text-align: left;">Técnica</th>
+                                <th style="padding: 15px; text-align: left;">Visualización</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 15px;"><strong>🔢 Numérica</strong></td>
+                                <td style="padding: 15px;"><strong>🔢 Numérica</strong></td>
+                                <td style="padding: 15px;">Correlación Pearson/Spearman</td>
+                                <td style="padding: 15px;">Scatter plot</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 15px;"><strong>📂 Categórica</strong></td>
+                                <td style="padding: 15px;"><strong>🔢 Numérica</strong></td>
+                                <td style="padding: 15px;">Comparación de grupos</td>
+                                <td style="padding: 15px;">Box plot</td>
+                            </tr>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 15px;"><strong>📂 Categórica</strong></td>
+                                <td style="padding: 15px;"><strong>📂 Categórica</strong></td>
+                                <td style="padding: 15px;">Tabla cruzada</td>
+                                <td style="padding: 15px;">Heatmap</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="background: #d1ecf1; padding: 20px; border-radius: 10px; border-left: 5px solid #17a2b8; margin-top: 30px;">
+                    <h4 style="color: #0c5460; margin-bottom: 10px;">💡 Clave del Éxito</h4>
+                    <p style="color: #0c5460; margin: 0;">
+                        <strong>Cada combinación cuenta una historia diferente.</strong> No uses correlación para categóricas, ni tablas cruzadas para numéricas.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Correlaciones - Interpretación -->
+        <div class="slide">
+            <h1>📈 Correlaciones - Interpretación Correcta</h1>
+            <div style="margin: 40px 0;">
+                <div class="comparison-grid">
+                    <div>
+                        <h2>🎯 Fuerza de Correlación</h2>
+                        <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 20px; border-radius: 10px; margin: 10px 0;">
+                            <strong>|r| > 0.7 🔴 FUERTE</strong><br>
+                            <span style="font-size: 0.9rem;">Relación muy evidente<br>Investigar causalidad</span>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; padding: 20px; border-radius: 10px; margin: 10px 0;">
+                            <strong>0.3 < |r| < 0.7 🟡 MODERADA</strong><br>
+                            <span style="font-size: 0.9rem;">Relación clara<br>Útil para predicción</span>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; padding: 20px; border-radius: 10px; margin: 10px 0;">
+                            <strong>|r| < 0.3 🟢 DÉBIL</strong><br>
+                            <span style="font-size: 0.9rem;">Poca relación lineal<br>Buscar patrones no lineales</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>⚠️ Código de Análisis</h2>
+                        <div class="code-example">
+# Correlación completa
+correlation = df['var1'].corr(df['var2'])
+
+# Interpretación automática
+if abs(correlation) > 0.7:
+    fuerza = "fuerte"
+elif abs(correlation) > 0.3:
+    fuerza = "moderada"
+else:
+    fuerza = "débil"
+
+direccion = "positiva" if correlation > 0 else "negativa"
+print(f"Correlación {fuerza} {direccion} (r={correlation:.3f})")
+
+# Visualización
+sns.scatterplot(x='var1', y='var2', data=df)
+sns.regplot(x='var1', y='var2', data=df, scatter=False)</div>
+                    </div>
+                </div>
+
+                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border-left: 5px solid #ffc107; margin-top: 30px; text-align: center;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">🧠 Recordar Siempre</h4>
+                    <p style="color: #856404; margin: 0; font-size: 1.2rem;">
+                        <strong>CORRELACIÓN ≠ CAUSACIÓN</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Introducción Multivariado -->
+        <div class="slide">
+            <h1>🌐 Introducción al Análisis Multivariado</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🤔 ¿Cuándo lo necesitamos?</h2>
+                    <p style="font-size: 1.2rem;">Cuando las relaciones bivariadas no cuentan toda la historia</p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>🔄 Paradoja de Simpson</h3>
+                        <p>Una correlación se invierte al controlar por tercera variable</p>
+                        <div style="margin-top: 15px; font-size: 0.9rem; opacity: 0.9;">
+                            <strong>Ejemplo:</strong> "Salario vs Educación" cambia controlando por "Género"
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <h3>👥 Segmentación</h3>
+                        <p>Diferentes grupos tienen comportamientos distintos</p>
+                        <div style="margin-top: 15px; font-size: 0.9rem; opacity: 0.9;">
+                            <strong>Ejemplo:</strong> Efecto diferente en urbano vs rural
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🎭 Variables Confundentes</h3>
+                        <p>El efecto real está "escondido"</p>
+                        <div style="margin-top: 15px; font-size: 0.9rem; opacity: 0.9;">
+                            <strong>Ejemplo:</strong> "Criminalidad vs Pobreza" se explica por "Desempleo"
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px;">
+                    <h3 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">🛠️ Técnicas Básicas que Usaremos</h3>
+                    <div class="comparison-grid" style="gap: 20px;">
+                        <div style="text-align: center;">
+                            <p style="margin: 10px 0;"><strong>🔍 Correlaciones Condicionales</strong></p>
+                            <p style="color: #666;">¿La correlación A-B cambia en diferentes grupos de C?</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="margin: 10px 0;"><strong>📊 Segmentación Múltiple</strong></p>
+                            <p style="color: #666;">GroupBy con múltiples dimensiones</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: GroupBy Avanzado -->
+        <div class="slide">
+            <h1>⚙️ GroupBy Avanzado para EDA</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Motor del Análisis Multivariado</h2>
+                    <p style="font-size: 1.2rem;">GroupBy = Segmentación automática + Cálculo de métricas</p>
+                </div>
+
+                <div class="comparison-grid">
+                    <div>
+                        <h3>🔰 Lo Básico (ya sabemos)</h3>
+                        <div class="code-example">
+# Promedio simple por grupo
+df.groupby('departamento')['poblacion'].mean()
+
+# Una función, un resultado
+df.groupby('categoria')['ventas'].sum()</div>
+                    </div>
+                    <div>
+                        <h3>🚀 Lo Avanzado (necesitamos)</h3>
+                        <div class="code-example">
+# Múltiples estadísticas
+df.groupby('departamento').agg({
+    'poblacion': ['count', 'sum', 'mean', 'std'],
+    'ingresos': ['mean', 'median', 'max'],
+    'educacion': ['mean']
+}).round(2)</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px;">
+                    <h3>🌐 Agrupaciones Múltiples</h3>
+                    <div class="code-example">
+# Segmentación por múltiples dimensiones
+segmentos = df.groupby(['departamento', 'zona', 'sector']).agg({
+    'poblacion': 'sum',
+    'ingresos': 'mean'
+}).reset_index()
+
+# ¿Qué combinaciones son inusuales?
+segmentos_ordenados = segmentos.sort_values('ingresos', ascending=False)
+print("Top 5 segmentos con mayores ingresos:")
+print(segmentos_ordenados.head())</div>
+                </div>
+
+                <div style="background: #d4edda; padding: 20px; border-radius: 10px; border-left: 5px solid #28a745; margin-top: 30px;">
+                    <h4 style="color: #155724; margin-bottom: 10px;">✅ Para qué nos sirve</h4>
+                    <p style="color: #155724; margin: 0;">
+                        • Identificar grupos con comportamiento atípico<br>
+                        • Calcular KPIs por segmentos<br>
+                        • Detectar patrones ocultos en subpoblaciones<br>
+                        • Base para análisis estadístico entre grupos
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Resumen -->
+        <div class="slide">
+            <h1>📋 Resumen de Hoy</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div>
+                    <h2>🧠 Metodología Aprendida:</h2>
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">✅ Framework sistemático univariado</li>
+                            <li style="padding: 6px 0;">✅ Identificación de distribuciones</li>
+                            <li style="padding: 6px 0;">✅ Técnicas específicas bivariado</li>
+                            <li style="padding: 6px 0;">✅ Interpretación de correlaciones</li>
+                            <li style="padding: 6px 0;">✅ Introducción a multivariado</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>💻 Herramientas Dominadas:</h2>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">✅ GroupBy avanzado con .agg()</li>
+                            <li style="padding: 6px 0;">✅ Análisis de distribuciones</li>
+                            <li style="padding: 6px 0;">✅ Correlaciones automáticas</li>
+                            <li style="padding: 6px 0;">✅ Segmentación múltiple</li>
+                            <li style="padding: 6px 0;">✅ Metodología sistemática</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px; display: inline-block;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Lo Más Importante</h2>
+                    <p style="font-size: 1.3rem; margin: 0;">
+                        Ahora tienes <strong>metodología sistemática</strong> para EDA profesional.<br>
+                        <span style="font-size: 1.1rem; opacity: 0.9;">¡Aplícala en tus proyectos! 🚀</span>
+                    </p>
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin-top: 40px; text-align: center;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">📅 Próxima Semana</h3>
+                <p style="color: #666; font-size: 1.1rem;">
+                    <strong>Continuaremos</strong> con técnicas avanzadas de visualización
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.style.display = 'none');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'flex';
+            slides[currentSlide].style.animation = 'fadeInUp 0.6s ease-out';
+            
+            // Draw charts when showing the distributions slide (slide 4)
+            if (currentSlide === 3) {
+                setTimeout(drawDistributionCharts, 300);
+            }
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            showSlide(currentSlide - 1);  
+        }
+        
+        function drawDistributionCharts() {
+            drawNormalDistribution();
+            drawSkewedDistribution();
+            drawBimodalDistribution();
+        }
+        
+        function drawNormalDistribution() {
+            const canvas = document.getElementById('normalChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const data = [8, 15, 25, 40, 60, 75, 85, 95, 85, 75, 60, 40, 25, 15, 8];
+            const barWidth = canvas.width / data.length;
+            const maxHeight = Math.max(...data);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+            ctx.lineWidth = 1;
+            
+            data.forEach((height, i) => {
+                const barHeight = (height / maxHeight) * (canvas.height - 20);
+                const x = i * barWidth + 2;
+                const y = canvas.height - barHeight - 10;
+                
+                ctx.fillRect(x, y, barWidth - 4, barHeight);
+                ctx.strokeRect(x, y, barWidth - 4, barHeight);
+            });
+        }
+        
+        function drawSkewedDistribution() {
+            const canvas = document.getElementById('skewedChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const data = [95, 80, 65, 50, 40, 30, 25, 20, 15, 12, 8, 6, 4, 3, 2];
+            const barWidth = canvas.width / data.length;
+            const maxHeight = Math.max(...data);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+            ctx.lineWidth = 1;
+            
+            data.forEach((height, i) => {
+                const barHeight = (height / maxHeight) * (canvas.height - 20);
+                const x = i * barWidth + 2;
+                const y = canvas.height - barHeight - 10;
+                
+                ctx.fillRect(x, y, barWidth - 4, barHeight);
+                ctx.strokeRect(x, y, barWidth - 4, barHeight);
+            });
+        }
+        
+        function drawBimodalDistribution() {
+            const canvas = document.getElementById('bimodalChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const data = [15, 30, 50, 75, 60, 35, 25, 20, 25, 35, 60, 75, 50, 30, 15];
+            const barWidth = canvas.width / data.length;
+            const maxHeight = Math.max(...data);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+            ctx.lineWidth = 1;
+            
+            data.forEach((height, i) => {
+                const barHeight = (height / maxHeight) * (canvas.height - 20);
+                const x = i * barWidth + 2;
+                const y = canvas.height - barHeight - 10;
+                
+                ctx.fillRect(x, y, barWidth - 4, barHeight);
+                ctx.strokeRect(x, y, barWidth - 4, barHeight);
+            });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+        
+        // Initialize
+        showSlide(0);
+        
+        // Draw charts when page loads if we're on the distributions slide
+        document.addEventListener('DOMContentLoaded', function() {
+            if (currentSlide === 3) {
+                setTimeout(drawDistributionCharts, 500);
+            }
+        });
+    </script>
+</body>
+</html>

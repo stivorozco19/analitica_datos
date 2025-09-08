@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Exploratorio de Datos - Clase 4</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 40px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 80vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide:first-child {
+            display: flex;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .title-slide h2 {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .title-slide .info {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #34495e;
+            margin: 30px 0 20px 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        .feature-card h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .code-example {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border: 1px solid #4a5568;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            white-space: pre;
+        }
+
+        .code-example .comment {
+            color: #68d391;
+            font-style: italic;
+        }
+
+        .code-example .keyword {
+            color: #f093fb;
+            font-weight: bold;
+        }
+
+        .code-example .string {
+            color: #ffd93d;
+        }
+
+        .code-example .function {
+            color: #4fd1c7;
+        }
+
+        .demo-section {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 25px;
+            margin: 60px 0;
+        }
+
+        .demo-title {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .workshop-section {
+            text-align: center;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 25px;
+            margin: 60px 0;
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .process-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 180px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .process-step::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: #667eea;
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        .current-step {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            box-shadow: 0 10px 25px rgba(253, 203, 110, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .methodology-steps {
+            display: grid;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .methodology-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 25px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border-left: 5px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .methodology-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.15);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+                margin: 20px 0;
+            }
+            
+            .title-slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container">
+        <button class="nav-btn" onclick="previousSlide()">◀ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ▶</button>
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide">
+            <h1>🔍 Análisis Exploratorio de Datos (EDA)</h1>
+            <h2>Clase 4 - Analítica de Datos</h2>
+            <div class="info">
+                <div style="margin-top: 20px;">Julian Eduardo Garzon Giraldo, MsC</div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Recordemos la Clase Anterior -->
+        <div class="slide">
+            <h1>🔄 Recordemos la Clase Anterior</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; display: inline-block;">
+                        <h2 style="color: white; margin: 0;">🧹 Manipulación de Datos con Pandas</h2>
+                    </div>
+                </div>
+                
+                <div class="comparison-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px;">
+                        <h3>✅ Lo Que Logramos</h3>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px;">
+                            <li style="padding: 5px 0;">• Limpieza de valores faltantes</li>
+                            <li style="padding: 5px 0;">• Eliminación de duplicados</li>
+                            <li style="padding: 5px 0;">• Transformación de tipos de datos</li>
+                            <li style="padding: 5px 0;">• Aplicación de principios Tidy Data</li>
+                        </ul>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px;">
+                        <h3>📊 No Alcanzamos a Ver</h3>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px;">
+                            <li style="padding: 5px 0;">• GroupBy y agregaciones</li>
+                            <li style="padding: 5px 0;">• Agrupaciones múltiples</li>
+                            <li style="padding: 5px 0;">• Función .agg() avanzada</li>
+                            <li style="padding: 5px 0;">• KPIs empresariales</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Hoy Completaremos</h2>
+                    <p style="font-size: 1.2rem;">Primero terminaremos GroupBy, luego comenzaremos EDA sistemático</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: GroupBy - ¿Qué es? -->
+        <div class="slide">
+            <h1>📊 GroupBy - ¿Qué es?</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 "Dividir - Aplicar - Combinar"</h2>
+                    <p style="font-size: 1.2rem;">Es como las Tablas Dinámicas de Excel, pero más poderoso</p>
+                </div>
+                
+                <div class="process-flow" style="justify-content: space-around;">
+                    <div class="process-step">
+                        <strong>📂 DIVIDIR</strong><br>
+                        Separar datos por grupos<br>
+                        <span style="font-size: 1.5rem;">df.groupby('categoria')</span>
+                    </div>
+                    <div class="process-step">
+                        <strong>⚡ APLICAR</strong><br>
+                        Ejecutar función en cada grupo<br>
+                        <span style="font-size: 1.5rem;">.mean(), .sum(), .count()</span>
+                    </div>
+                    <div class="process-step">
+                        <strong>🔗 COMBINAR</strong><br>
+                        Unir resultados<br>
+                        <span style="font-size: 1.5rem;">Nuevo DataFrame</span>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px;">
+                    <h3 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">💡 Analogía: Restaurante</h3>
+                    <div class="comparison-grid" style="gap: 20px;">
+                        <div style="text-align: center;">
+                            <p style="margin: 10px 0;"><strong>📋 Pedidos por Mesa</strong></p>
+                            <p style="color: #666;">DIVIDIR: Agrupar pedidos por número de mesa</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="margin: 10px 0;"><strong>💰 Total por Mesa</strong></p>
+                            <p style="color: #666;">APLICAR: Sumar el costo de cada mesa</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: ¿Qué es EDA? -->
+        <div class="slide">
+            <h1>🔍 ¿Qué es EDA?</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 20px;">📊 Análisis Exploratorio de Datos</h2>
+                    <p style="font-size: 1.3rem; margin-bottom: 20px;">
+                        <strong>"Conocer tus datos antes de modelar"</strong>
+                    </p>
+                    <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-top: 30px;">
+                        <p style="font-size: 1.1rem;">
+                            "Es mejor mirar los datos y aproximarse de lo que se está midiendo, que asumir algo sobre ellos"
+                            <br><em>- John Tukey</em>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="comparison-grid">
+                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3>❌ Sin EDA</h3>
+                        <ul style="list-style: none; text-align: left; margin-top: 20px;">
+                            <li style="padding: 8px 0;">• Modelar datos "sucios" sin conocerlos</li>
+                            <li style="padding: 8px 0;">• Pasar por alto patrones importantes</li>
+                            <li style="padding: 8px 0;">• Ignorar outliers que afectan resultados</li>
+                            <li style="padding: 8px 0;">• Conclusiones incorrectas o sesgadas</li>
+                        </ul>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3>✅ Con EDA</h3>
+                        <ul style="list-style: none; text-align: left; margin-top: 20px;">
+                            <li style="padding: 8px 0;">• Entender la estructura de los datos</li>
+                            <li style="padding: 8px 0;">• Detectar patrones y anomalías</li>
+                            <li style="padding: 8px 0;">• Generar hipótesis de negocio</li>
+                            <li style="padding: 8px 0;">• Decisiones basadas en evidencia</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 15px;">💡 Principio Fundamental</h3>
+                    <p style="color: #666; font-size: 1.2rem;">
+                        <strong>Los datos tienen historias que contar. EDA nos ayuda a escucharlas.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Taller Práctico -->
+        <div class="slide">
+            <div class="workshop-section">
+                <div style="font-size: 3rem; margin-bottom: 30px;">🛠️</div>
+                <div class="demo-title">Taller Práctico</div>
+                <div style="font-size: 1.5rem; margin-bottom: 40px;">EDA Completo con Dataset Gubernamental</div>
+                
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 40px; border-radius: 20px; margin: 40px 0;">
+                    <h2 style="color: white; margin-bottom: 30px;">📊 Dataset: datos.gov.co</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px;">
+                        <div style="background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 10px;">🏗️ Estructura</h3>
+                            <p style="color: white; font-size: 0.9rem;">Shape, info, describe</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 10px;">🧹 Limpieza</h3>
+                            <p style="color: white; font-size: 0.9rem;">Nulos, duplicados, tipos</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 10px;">📈 Univariado</h3>
+                            <p style="color: white; font-size: 0.9rem;">3 gráficos clave</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+                        <div style="background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 10px;">🔗 Bivariado</h3>
+                            <p style="color: white; font-size: 0.9rem;">2 correlaciones importantes</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 10px;">🌐 Multivariado</h3>
+                            <p style="color: white; font-size: 0.9rem;">1 segmentación interesante</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.3); padding: 25px; border-radius: 15px; font-size: 1.2rem;">
+                    <strong>🎯 Meta:</strong> 5 insights clave que puedan influir en política pública
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Resumen -->
+        <div class="slide">
+            <h1>📋 Resumen de Hoy</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div>
+                    <h2>🧠 Conceptos Clave:</h2>
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">✅ GroupBy para agregaciones</li>
+                            <li style="padding: 6px 0;">✅ Metodología sistemática de EDA</li>
+                            <li style="padding: 6px 0;">✅ Los 4 pasos fundamentales</li>
+                            <li style="padding: 6px 0;">✅ Importancia de la calidad de datos</li>
+                            <li style="padding: 6px 0;">✅ De números a insights</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>💻 Habilidades Prácticas:</h2>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">✅ Agrupaciones múltiples con .agg()</li>
+                            <li style="padding: 6px 0;">✅ Exploración sistemática de datos</li>
+                            <li style="padding: 6px 0;">✅ Detección de problemas de calidad</li>
+                            <li style="padding: 6px 0;">✅ Generación de hipótesis</li>
+                            <li style="padding: 6px 0;">✅ Análisis univariado básico</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px; display: inline-block;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Lo Más Importante</h2>
+                    <p style="font-size: 1.3rem; margin: 0;">
+                        Ahora tienes las herramientas para <strong>explorar datos sistemáticamente</strong>.<br>
+                        <span style="font-size: 1.1rem; opacity: 0.9;">¡De limpieza a insights en 4 pasos! 🚀</span>
+                    </p>
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin-top: 40px; text-align: center;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">💡 Mensaje Final</h3>
+                <p style="color: #666; font-size: 1.1rem;">
+                    Hoy aprendiste a <strong>escuchar las historias</strong> que los datos quieren contarte.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.style.display = 'none');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'flex';
+            slides[currentSlide].style.animation = 'fadeInUp 0.6s ease-out';
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            showSlide(currentSlide - 1);  
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+        
+        // Initialize
+        showSlide(0);
+        
+        // Auto-animate elements when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all cards and elements
+        document.querySelectorAll('.feature-card, .methodology-step').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

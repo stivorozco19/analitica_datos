@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos de Analítica de Datos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 40px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .title-slide h2 {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .title-slide .author {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #34495e;
+            margin: 30px 0 20px 0;
+        }
+
+        .professor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .professor-card {
+            background: linear-gradient(135deg, #f6f9fc 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .professor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .professor-card h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .objectives-list {
+            display: grid;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .objective-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .objective-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.1);
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .course-structure {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .structure-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .structure-card h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .structure-card ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .structure-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .structure-card li:last-child {
+            border-bottom: none;
+        }
+
+        .concept-diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .concept-element {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .concept-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .concept-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .concept-desc {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .project-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .comparison-card {
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .comparison-card.good {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+        }
+
+        .comparison-card.bad {
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+            color: white;
+        }
+
+        .example-code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .practice-section {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 25px;
+            margin: 60px 0;
+        }
+
+        .practice-title {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+                margin: 20px 0;
+            }
+            
+            .title-slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .professor-grid,
+            .course-structure,
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .concept-diagram {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container">
+        <button class="nav-btn" onclick="previousSlide()">◀ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ▶</button>
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide">
+            <h1>Fundamentos de Analítica de Datos</h1>
+            <h2>Curso de Analítica de Datos</h2>
+            <div class="author">Julian Eduardo Garzon Giraldo, MsC</div>
+        </div>
+
+        <!-- Slide 2: About the Professor -->
+        <div class="slide">
+            <h1>¿Quiénes estaremos este semestre?</h1>
+            <div class="professor-grid">
+                <div class="professor-card">
+                    <h3>👨‍👩‍👧‍👦 Vida Personal</h3>
+                    <ul>
+                        <li>✓ Casado</li>
+                        <li>✓ Padre de 2 hijos</li>
+                        <li>✓ 7 gatos 🐱</li>
+                    </ul>
+                </div>
+                <div class="professor-card">
+                    <h3>🎓 Formación</h3>
+                    <ul>
+                        <li>✓ Ingeniero de Sistemas</li>
+                        <li>✓ Máster en Gestión de Informática y Telecomunicaciones</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="professor-card" style="margin-top: 20px;">
+                <h3>💼 Experiencia</h3>
+                <ul>
+                    <li>✓ 18 años trabajando en el sector de tecnología</li>
+                    <li>✓ Desarrollo de software, arquitectura, Datos, Agile Coach</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Learning Objectives -->
+        <div class="slide">
+            <h1>¿Qué lograrás en este curso?</h1>
+            <div class="objectives-list">
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Transformar datos crudos en información valiosa para la toma de decisiones</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Dominar Python para análisis de datos con pandas, matplotlib y seaborn</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Crear dashboards profesionales en Power BI que comuniquen insights</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Aplicar estadística descriptiva e inferencial para encontrar patrones</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Desarrollar modelos predictivos básicos con machine learning</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Comunicar hallazgos de manera efectiva usando data storytelling</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Prerequisites -->
+        <div class="slide">
+            <h1>¿Qué necesitas para tener éxito?</h1>
+            <div style="margin: 40px 0;">
+                <h2 style="text-align: center; margin-bottom: 30px;">📚 Conocimientos Previos Requeridos</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                    <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 20px;">🚨 Conocimientos OBLIGATORIOS</h3>
+                        <ul style="list-style: none;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">• <strong>Python básico</strong>: variables, listas, diccionarios, funciones</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">• <strong>Programación</strong>: estructuras de control (if, for, while)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">• <strong>Gestión de información</strong>: concepto de bases de datos</li>
+                            <li style="padding: 8px 0;">• <strong>Estadística básica</strong>: promedio, mediana, desviación</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 20px;">⚠️ Conocimientos DESEABLES</h3>
+                        <ul style="list-style: none;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">• <strong>SQL básico</strong>: SELECT, WHERE, GROUP BY</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">• <strong>Excel intermedio</strong>: fórmulas, tablas dinámicas</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">• <strong>Inglés técnico</strong>: documentación y librerías</li>
+                            <li style="padding: 8px 0;">• <strong>Curiosidad</strong>: ganas de explorar datos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h3 style="color: white; margin-bottom: 20px;">✅ Lo que aprenderás DESDE CERO en el curso</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>🐍 pandas & numpy</h4>
+                            <p style="font-size: 0.9rem;">Manipulación de datos profesional</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>📊 Power BI</h4>
+                            <p style="font-size: 0.9rem;">Dashboards empresariales</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>🤖 scikit-learn</h4>
+                            <p style="font-size: 0.9rem;">Machine Learning aplicado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin-top: 30px;">
+                <h3 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">🎯 Autoevaluación Rápida</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+                    <div>
+                        <h4 style="color: #667eea;">¿Puedes hacer esto en Python?</h4>
+                        <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; margin-top: 10px;">
+datos = [1, 2, 3, 4, 5]<br>
+promedio = sum(datos) / len(datos)<br>
+print(f"Promedio: {promedio}")
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: #667eea;">¿Entiendes esta consulta SQL?</h4>
+                        <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; margin-top: 10px;">
+SELECT region, COUNT(*) as total<br>
+FROM ventas<br>
+WHERE fecha >= '2024-01-01'<br>
+GROUP BY region
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: #666; font-style: italic;">
+                    Si respondiste "sí" a ambas, ¡estás listo! Si no, tendrás que nivelar rápidamente.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Course Structure -->
+        <div class="slide">
+            <h1>¿Cómo está organizado el curso?</h1>
+            <div class="course-structure">
+                <div class="structure-card">
+                    <h3>📚 Estructura del Curso</h3>
+                    <ul>
+                        <li>16 semanas totales</li>
+                        <li>4 horas presenciales + 4 independientes</li>
+                        <li>4 módulos temáticos progresivos</li>
+                        <li>1 proyecto integrador evolutivo</li>
+                    </ul>
+                </div>
+                <div class="structure-card">
+                    <h3>📋 Evaluación</h3>
+                    <ul>
+                        <li>Semana 6: EDA Completo</li>
+                        <li>Semana 12: Dashboard Ejecutivo</li>
+                        <li>Semana 15: Modelo Predictivo</li>
+                        <li>Presentaciones por equipos</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: 40px; text-align: center;">
+                <h2>Los 4 Módulos del Curso:</h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 20px;">
+                    <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 20px; border-radius: 12px; text-align: center;">
+                        <h4>Módulo 1 (Sem 1-6)</h4>
+                        <p>Python para Análisis</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%); padding: 20px; border-radius: 12px; text-align: center;">
+                        <h4>Módulo 2 (Sem 7-12)</h4>
+                        <p>BI y Visualización</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                        <h4>Módulo 3 (Sem 13-15)</h4>
+                        <p>Análisis Estadístico</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%); padding: 20px; border-radius: 12px; text-align: center;">
+                        <h4>Módulo 4 (Sem 16)</h4>
+                        <p>Presentaciones</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Project Overview -->
+        <div class="slide">
+            <h1>Tu Proyecto Integrador: Datos Abiertos de Colombia</h1>
+            <div style="text-align: center; margin: 60px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 50px; border-radius: 25px;">
+                    <h2 style="color: white; margin-bottom: 30px;">🇨🇴 Datos reales del gobierno colombiano</h2>
+                    <p style="font-size: 1.3rem; margin-bottom: 30px;">
+                        Tu equipo elegirá un dataset de <strong>datos.gov.co</strong> y desarrollará un proyecto completo
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin: 40px 0; text-align: center;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">📊 Semana 6</h3>
+                            <p style="margin: 0;">EDA Completo<br>Análisis Exploratorio</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">📈 Semana 12</h3>
+                            <p style="margin: 0;">Dashboard Ejecutivo<br>Power BI + Insights</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">🤖 Semana 15</h3>
+                            <p style="margin: 0;">Modelo ML<br>Predictivo o Clasificación</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 40px;">
+                <h2 style="text-align: center;">🌐 Fuente: datos.gov.co</h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 30px;">
+                    <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 25px; border-radius: 15px; text-align: center;">
+                        <h3>🏥 Salud</h3>
+                        <p>COVID-19, hospitales,<br>enfermedades</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%); padding: 25px; border-radius: 15px; text-align: center;">
+                        <h3>🎓 Educación</h3>
+                        <p>ICFES, deserción,<br>universidades</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; text-align: center;">
+                        <h3>💼 Economía</h3>
+                        <p>Desempleo, PIB,<br>empresas</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%); padding: 25px; border-radius: 15px; text-align: center;">
+                        <h3>🌱 Ambiente</h3>
+                        <p>Calidad del aire,<br>deforestación</p>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin-top: 30px; text-align: center;">
+                    <h3 style="color: #2c3e50; margin-bottom: 15px;">🎯 Libertad Total de Elección</h3>
+                    <p style="color: #666; font-size: 1.1rem; margin-bottom: 20px;">
+                        Cada equipo explora un sector diferente según sus intereses: seguridad, transporte, 
+                        turismo, agricultura, tecnología, justicia... ¡Más de 5,000 datasets disponibles!
+                    </p>
+                    <a href="https://www.datos.gov.co/" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: transform 0.3s ease;">
+                        🌐 Explorar datos.gov.co
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: What we'll do today -->
+        <div class="slide">
+            <h1>¿Qué haremos hoy?</h1>
+            <div class="comparison-grid">
+                <div class="comparison-card good">
+                    <h2>🧠 Hoy aprenderás:</h2>
+                    <ul style="list-style: none; text-align: left; margin-top: 20px;">
+                        <li style="padding: 8px 0;">• ¿Qué es analítica de datos vs BI vs ciencia de datos?</li>
+                        <li style="padding: 8px 0;">• Modelo: Datos → Información → Conocimiento</li>
+                        <li style="padding: 8px 0;">• Casos reales: Netflix, Spotify, empresas colombianas</li>
+                        <li style="padding: 8px 0;">• El proyecto MercadoCol completo</li>
+                    </ul>
+                </div>
+                <div class="comparison-card bad">
+                    <h2>⚡ Actividades prácticas:</h2>
+                    <ul style="list-style: none; text-align: left; margin-top: 20px;">
+                        <li style="padding: 8px 0;">• Configurar entorno Python + VSCode</li>
+                        <li style="padding: 8px 0;">• Primer análisis con pandas</li>
+                        <li style="padding: 8px 0;">• Aplicar modelo teórico en práctica</li>
+                        <li style="padding: 8px 0;">• Formar equipos de proyecto</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Data Ecosystem -->
+        <div class="slide">
+            <h1>El Ecosistema de Datos</h1>
+            <div class="concept-diagram">
+                <div class="concept-element">
+                    <div class="concept-icon">📊</div>
+                    <div class="concept-title">Business Intelligence</div>
+                    <div class="concept-desc">¿Qué pasó?<br>Reportes históricos<br>Dashboards ejecutivos</div>
+                </div>
+                <div class="concept-element">
+                    <div class="concept-icon">🔍</div>
+                    <div class="concept-title">Analítica de Datos</div>
+                    <div class="concept-desc">¿Por qué pasó?<br>Insights y patrones<br>Recomendaciones</div>
+                </div>
+                <div class="concept-element">
+                    <div class="concept-icon">🤖</div>
+                    <div class="concept-title">Ciencia de Datos</div>
+                    <div class="concept-desc">¿Qué pasará?<br>Predicciones<br>Inteligencia artificial</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px; background: #f8f9fa; padding: 30px; border-radius: 15px;">
+                <h2 style="color: #2c3e50; margin-bottom: 20px;">🎯 Nuestro Enfoque: Analítica de Datos</h2>
+                <p style="font-size: 1.2rem; color: #666; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                    Nos enfocamos en <strong>transformar datos en decisiones empresariales</strong>. 
+                    No solo reportamos lo que pasó, sino que descubrimos <strong>por qué pasó</strong> 
+                    y <strong>qué hacer al respecto</strong>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Data vs Information vs Knowledge -->
+        <div class="slide">
+            <h1>La Pirámide del Valor: Datos → Información → Conocimiento</h1>
+            <div style="margin: 40px 0; text-align: center;">
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 20px; margin: 20px auto; display: inline-block;">
+                    <div style="font-size: 1.5rem; margin-bottom: 15px;">📦</div>
+                    <div style="font-size: 1.4rem; font-weight: bold; margin-bottom: 15px;">DATOS</div>
+                    <div style="opacity: 0.9;">Hechos crudos, números, texto</div>
+                    <div style="margin-top: 15px; font-size: 2.5rem;">↑</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 35px; border-radius: 20px; margin: 30px auto; display: inline-block;">
+                    <div style="font-size: 2rem; margin-bottom: 20px;">📈</div>
+                    <div style="font-size: 1.6rem; font-weight: bold; margin-bottom: 15px;">INFORMACIÓN</div>
+                    <div style="opacity: 0.9;">Datos procesados y organizados</div>
+                    <div style="margin-top: 15px; font-size: 2.5rem;">↑</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 40px; border-radius: 20px; margin: 40px auto; display: inline-block;">
+                    <div style="font-size: 2.5rem; margin-bottom: 30px;">🧠</div>
+                    <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 15px;">CONOCIMIENTO</div>
+                    <div style="opacity: 0.9;">Patrones, insights, decisiones</div>
+                </div>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px;">
+                <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">💡 Ejemplo Práctico</h2>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <div style="text-align: center;">
+                        <h3 style="color: #00b894;">DATOS</h3>
+                        <p>25°C, 30°C, 28°C<br>(temperaturas registradas)</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <h3 style="color: #f5576c;">INFORMACIÓN</h3>
+                        <p>Temperatura promedio: 27.7°C<br>(dato procesado)</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <h3 style="color: #0984e3;">CONOCIMIENTO</h3>
+                        <p>Las ventas de helados aumentan<br>cuando T > 25°C</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Data vs Information vs Knowledge - Detailed -->
+        <div class="slide">
+            <h1>Entendiendo Cada Nivel de la Pirámide</h1>
+            <div style="margin: 60px 0;">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+                    
+                    <!-- DATOS -->
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <div style="display: grid; grid-template-columns: 80px 1fr; gap: 20px; align-items: center;">
+                            <div style="font-size: 3rem; text-align: center;">📦</div>
+                            <div>
+                                <h2 style="color: white; margin: 0 0 15px 0;">DATOS - Los Hechos Crudos</h2>
+                                <p style="margin: 0; font-size: 1.1rem; opacity: 0.9;">
+                                    <strong>¿Qué son?</strong> Información sin procesar, números sueltos, texto sin contexto.<br>
+                                    <strong>Características:</strong> Sin significado por sí solos, necesitan ser organizados.<br>
+                                    <strong>Ejemplos:</strong> 25°C, $150,000, "Juan", 2024-03-15
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- INFORMACIÓN -->
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <div style="display: grid; grid-template-columns: 80px 1fr; gap: 20px; align-items: center;">
+                            <div style="font-size: 3rem; text-align: center;">📈</div>
+                            <div>
+                                <h2 style="color: white; margin: 0 0 15px 0;">INFORMACIÓN - Datos Procesados</h2>
+                                <p style="margin: 0; font-size: 1.1rem; opacity: 0.9;">
+                                    <strong>¿Qué es?</strong> Datos organizados, calculados y con contexto.<br>
+                                    <strong>Características:</strong> Responde preguntas básicas (qué, cuándo, dónde).<br>
+                                    <strong>Ejemplos:</strong> "Temperatura promedio: 27.7°C", "Ventas febrero: $45M"
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONOCIMIENTO -->
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <div style="display: grid; grid-template-columns: 80px 1fr; gap: 20px; align-items: center;">
+                            <div style="font-size: 3rem; text-align: center;">🧠</div>
+                            <div>
+                                <h2 style="color: white; margin: 0 0 15px 0;">CONOCIMIENTO - Insights Accionables</h2>
+                                <p style="margin: 0; font-size: 1.1rem; opacity: 0.9;">
+                                    <strong>¿Qué es?</strong> Interpretación de información que genera valor.<br>
+                                    <strong>Características:</strong> Responde "por qué" y sugiere "qué hacer".<br>
+                                    <strong>Ejemplos:</strong> "Subir temp. → +20% ventas helados → aumentar stock"
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Real Business Example -->
+        <div class="slide">
+            <h1>Ejemplo Completo: Análisis de Ventas</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: #2c3e50;">🏬 Caso: Tienda de Ropa Online</h2>
+                    <p style="font-size: 1.2rem; color: #666;">Veamos cómo se aplica el modelo en un caso real</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr; gap: 25px;">
+                    <!-- DATOS -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; border-left: 5px solid #00cec9;">
+                        <h3 style="color: #00cec9; margin-bottom: 15px;">📦 DATOS CRUDOS</h3>
+                        <div style="background: #2d3748; color: #e2e8f0; padding: 20px; border-radius: 10px; font-family: monospace; font-size: 0.9rem;">
+cliente_id | producto | cantidad | precio | fecha<br>
+001        | Camiseta | 2        | 25000  | 2024-03-01<br>
+002        | Pantalón | 1        | 85000  | 2024-03-01<br>
+003        | Camiseta | 1        | 25000  | 2024-03-02<br>
+004        | Zapatos  | 1        | 120000 | 2024-03-02<br>
+...        | ...      | ...      | ...    | ...
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-style: italic;">
+                            Solo números y texto sin contexto. No nos dicen nada por sí solos.
+                        </p>
+                    </div>
+
+                    <!-- INFORMACIÓN -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; border-left: 5px solid #f5576c;">
+                        <h3 style="color: #f5576c; margin-bottom: 15px;">📈 INFORMACIÓN PROCESADA</h3>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                            <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #f5576c;">Ventas Totales</h4>
+                                <p style="font-size: 1.5rem; font-weight: bold; margin: 10px 0;">$2,850,000</p>
+                                <p style="font-size: 0.9rem; color: #666;">Marzo 2024</p>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #f5576c;">Producto Top</h4>
+                                <p style="font-size: 1.5rem; font-weight: bold; margin: 10px 0;">Camisetas</p>
+                                <p style="font-size: 0.9rem; color: #666;">45% de ventas</p>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #f5576c;">Ticket Promedio</h4>
+                                <p style="font-size: 1.5rem; font-weight: bold; margin: 10px 0;">$95,000</p>
+                                <p style="font-size: 0.9rem; color: #666;">Por cliente</p>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-style: italic;">
+                            Ahora los datos tienen contexto y nos dan respuestas básicas sobre el negocio.
+                        </p>
+                    </div>
+
+                    <!-- CONOCIMIENTO -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; border-left: 5px solid #0984e3;">
+                        <h3 style="color: #0984e3; margin-bottom: 15px;">🧠 CONOCIMIENTO ACCIONABLE</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                            <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #0984e3;">💡 Insight</h4>
+                                <p style="margin: 10px 0;">Las camisetas representan el 45% de ventas pero solo el 30% del margen total.</p>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #0984e3;">🎯 Acción</h4>
+                                <p style="margin: 10px 0;">Promover zapatos y pantalones (mayor margen) usando camisetas como gancho.</p>
+                            </div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%); color: white; padding: 20px; border-radius: 10px; margin-top: 20px; text-align: center;">
+                            <h4 style="color: white; margin-bottom: 10px;">🚀 DECISIÓN EMPRESARIAL</h4>
+                            <p style="margin: 0; font-size: 1.1rem;">
+                                Crear bundled offers: "Compra camiseta + pantalón con 15% descuento"
+                            </p>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-style: italic;">
+                            El conocimiento nos dice QUÉ hacer para mejorar el negocio.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Our Role as Analysts - Expanded -->
+        <div class="slide">
+            <h1>Nuestro Rol como Analistas de Datos</h1>
+            <div style="margin: 60px 0;">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin: 40px 0;">
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 20px; margin-bottom: 20px;">
+                            <div style="font-size: 3rem; margin-bottom: 15px;">📥</div>
+                            <h3>RECOLECTAR</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.9;">Sensores, APIs, bases de datos</p>
+                        </div>
+                        <p><strong>DATOS CRUDOS</strong></p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 20px; margin-bottom: 20px;">
+                            <div style="font-size: 3rem; margin-bottom: 15px;">⚙️</div>
+                            <h3>PROCESAR</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.9;">Limpiar, transformar, agregar</p>
+                        </div>
+                        <p><strong>INFORMACIÓN</strong></p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 30px; border-radius: 20px; margin-bottom: 20px;">
+                            <div style="font-size: 3rem; margin-bottom: 15px;">🧠</div>
+                            <h3>INTERPRETAR</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.9;">Patrones, insights, hipótesis</p>
+                        </div>
+                        <p><strong>CONOCIMIENTO</strong></p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; margin-bottom: 20px;">
+                            <div style="font-size: 3rem; margin-bottom: 15px;">💼</div>
+                            <h3>COMUNICAR</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.9;">Reportes, dashboards, presentaciones</p>
+                        </div>
+                        <p><strong>VALOR EMPRESARIAL</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 20px; text-align: center;">
+                <h2 style="color: white; margin-bottom: 20px;">🎯 El Perfil Real del Analista</h2>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 30px;">
+                    <div>
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🕵️</div>
+                        <h3>50% Detective</h3>
+                        <p style="opacity: 0.9; font-size: 0.9rem;">Buscar patrones y anomalías en los datos</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🗣️</div>
+                        <h3>30% Traductor</h3>
+                        <p style="opacity: 0.9; font-size: 0.9rem;">Convertir datos en lenguaje de negocio</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔧</div>
+                        <h3>20% Técnico</h3>
+                        <p style="opacity: 0.9; font-size: 0.9rem;">Herramientas y metodologías</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: What Analytics IS and IS NOT -->
+        <div class="slide">
+            <h1>¿Qué SÍ y qué NO es Analítica de Datos?</h1>
+            <div class="comparison-grid">
+                <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 30px; border-radius: 15px;">
+                    <h2>❌ NO es Analítica de Datos:</h2>
+                    <ul style="list-style: none; margin-top: 30px;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Solo hacer gráficos bonitos</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Programar modelos de IA complejos</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Generar reportes automáticos</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Solo estadística teórica</li>
+                        <li style="padding: 10px 0;">Trabajar con big data siempre</li>
+                    </ul>
+                </div>
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px;">
+                    <h2>✅ SÍ es Analítica de Datos:</h2>
+                    <ul style="list-style: none; margin-top: 30px;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Transformar datos en decisiones</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Encontrar patrones que generen valor</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Comunicar insights accionables</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Resolver problemas empresariales</li>
+                        <li style="padding: 10px 0;">Generar impacto medible</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px; background: #f8f9fa; padding: 30px; border-radius: 15px;">
+                <h2 style="color: #2c3e50;">💡 Distribución Real del Tiempo de un Analista</h2>
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 25px;">
+                    <div style="background: #74b9ff; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">40%</div>
+                        <div style="font-size: 0.9rem;">Limpieza de datos</div>
+                    </div>
+                    <div style="background: #fd79a8; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">25%</div>
+                        <div style="font-size: 0.9rem;">Análisis exploratorio</div>
+                    </div>
+                    <div style="background: #00cec9; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">20%</div>
+                        <div style="font-size: 0.9rem;">Visualización</div>
+                    </div>
+                    <div style="background: #fdcb6e; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">10%</div>
+                        <div style="font-size: 0.9rem;">Implementación</div>
+                    </div>
+                    <div style="background: #a29bfe; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">5%</div>
+                        <div style="font-size: 0.9rem;">Aprendizaje</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Real Business Cases - Detailed -->
+        <div class="slide">
+            <h1>Casos Empresariales: Cómo se Hace Analítica Real</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: #2c3e50;">Vamos más allá del "qué" para entender el "cómo"</h2>
+                </div>
+
+                <!-- Netflix Case -->
+                <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 40px; border-radius: 20px; margin-bottom: 40px;">
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 30px; align-items: center;">
+                        <div style="font-size: 4rem; text-align: center;">🎬</div>
+                        <div>
+                            <h2 style="color: white; margin: 0 0 20px 0;">Netflix: El Sistema de Recomendaciones</h2>
+                            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">
+                                <strong>Problema:</strong> Con 15,000 títulos, ¿cómo evitar que usuarios se abrumen y cancelen?
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; margin: 30px 0;">
+                        <h3 style="color: white; margin-bottom: 20px;">📊 Los Datos que Recolectan:</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                            <ul style="list-style: none; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• ¿Qué miras? (título, género, duración)</li>
+                                <li style="padding: 5px 0;">• ¿Cuándo lo miras? (hora, día, dispositivo)</li>
+                                <li style="padding: 5px 0;">• ¿Cómo lo miras? (pausas, rebobinados, abandono)</li>
+                            </ul>
+                            <ul style="list-style: none; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• ¿Qué buscas? (términos, navegación)</li>
+                                <li style="padding: 5px 0;">• ¿Cómo calificas? (thumbs up/down)</li>
+                                <li style="padding: 5px 0;">• ¿Quién eres? (perfil, ubicación, suscripción)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; margin: 30px 0;">
+                        <h3 style="color: white; margin-bottom: 20px;">🔍 Cómo Procesan la Información:</h3>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center;">
+                            <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                                <h4>Filtrado Colaborativo</h4>
+                                <p style="font-size: 0.9rem;">"Usuarios como tú también vieron..."</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                                <h4>Análisis de Contenido</h4>
+                                <p style="font-size: 0.9rem;">"Te gustó X, esto es similar..."</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                                <h4>Algoritmos Híbridos</h4>
+                                <p style="font-size: 0.9rem;">Combina múltiples señales</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 20px;">🧠 El Conocimiento que Generan:</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                            <div>
+                                <h4 style="color: white;">💡 Insights Operativos:</h4>
+                                <ul style="list-style: none; font-size: 0.95rem;">
+                                    <li style="padding: 3px 0;">• 70% abandonan si no encuentran algo en 90 segundos</li>
+                                    <li style="padding: 3px 0;">• Usuarios nocturnos prefieren comedias</li>
+                                    <li style="padding: 3px 0;">• Fin de semana = más tiempo para series largas</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: white;">🎯 Decisiones de Negocio:</h4>
+                                <ul style="list-style: none; font-size: 0.95rem;">
+                                    <li style="padding: 3px 0;">• Invertir $15B en contenido original</li>
+                                    <li style="padding: 3px 0;">• Crear diferentes portadas por región</li>
+                                    <li style="padding: 3px 0;">• Optimizar horas de lanzamiento global</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px; margin-top: 20px; text-align: center;">
+                            <strong style="font-size: 1.1rem;">🏆 RESULTADO: $1B+ anuales ahorrados en retención de clientes</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bancolombia Case -->
+                <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 40px; border-radius: 20px;">
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 30px; align-items: center;">
+                        <div style="font-size: 4rem; text-align: center;">🏦</div>
+                        <div>
+                            <h2 style="color: white; margin: 0 0 20px 0;">Bancolombia: Credit Scoring Inteligente</h2>
+                            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">
+                                <strong>Problema:</strong> ¿A quién prestar dinero sin quebrar por morosidad?
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; margin: 30px 0;">
+                        <h3 style="color: white; margin-bottom: 20px;">📊 Fuentes de Datos Innovadoras:</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                            <div>
+                                <h4 style="color: white;">Datos Tradicionales:</h4>
+                                <ul style="list-style: none; font-size: 1rem;">
+                                    <li style="padding: 5px 0;">• Historial crediticio (Datacrédito)</li>
+                                    <li style="padding: 5px 0;">• Ingresos declarados</li>
+                                    <li style="padding: 5px 0;">• Patrimonio y garantías</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: white;">Datos Alternativos:</h4>
+                                <ul style="list-style: none; font-size: 1rem;">
+                                    <li style="padding: 5px 0;">• Comportamiento transaccional</li>
+                                    <li style="padding: 5px 0;">• Geolocalización de pagos</li>
+                                    <li style="padding: 5px 0;">• Patrones de ahorro</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; margin: 30px 0;">
+                        <h3 style="color: white; margin-bottom: 20px;">⚙️ Cómo Construyen el Modelo:</h3>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                                <h4 style="font-size: 0.9rem;">1. Segmentación</h4>
+                                <p style="font-size: 0.8rem;">Empleados, independientes, pensionados</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                                <h4 style="font-size: 0.9rem;">2. Variables</h4>
+                                <p style="font-size: 0.8rem;">300+ variables por cliente</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                                <h4 style="font-size: 0.9rem;">3. Machine Learning</h4>
+                                <p style="font-size: 0.8rem;">Random Forest + XGBoost</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                                <h4 style="font-size: 0.9rem;">4. Score Final</h4>
+                                <p style="font-size: 0.8rem;">0-1000 puntos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 20px;">🎯 Insights que Descubrieron:</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                            <div>
+                                <h4 style="color: white;">🔍 Patrones Inesperados:</h4>
+                                <ul style="list-style: none; font-size: 0.95rem;">
+                                    <li style="padding: 3px 0;">• Clientes que pagan servicios los viernes son más confiables</li>
+                                    <li style="padding: 3px 0;">• Uso de cajeros de otros bancos indica estabilidad financiera</li>
+                                    <li style="padding: 3px 0;">• Pequeños ahorros constantes > grandes depósitos esporádicos</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: white;">💼 Decisiones Implementadas:</h4>
+                                <ul style="list-style: none; font-size: 0.95rem;">
+                                    <li style="padding: 3px 0;">• Preaprobación automática para score >750</li>
+                                    <li style="padding: 3px 0;">• Tasas dinámicas según comportamiento</li>
+                                    <li style="padding: 3px 0;">• Alertas tempranas de deterioro crediticio</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px; margin-top: 20px; text-align: center;">
+                            <strong style="font-size: 1.1rem;">🏆 RESULTADO: 30% reducción en morosidad + 25% más créditos aprobados</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: The Process - CRISP-DM -->
+        <div class="slide">
+            <h1>El Proceso de Analítica: CRISP-DM Simplificado</h1>
+            <div style="margin: 60px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; display: inline-block;">
+                        <h2 style="color: white; margin-bottom: 15px;">🔄 ¿Qué es CRISP-DM?</h2>
+                        <p style="font-size: 1.2rem; margin-bottom: 20px; opacity: 0.9;">
+                            <strong>C</strong>ross-Industry <strong>S</strong>tandard <strong>P</strong>rocess for <strong>D</strong>ata <strong>M</strong>ining
+                        </p>
+                        <p style="font-size: 1rem; opacity: 0.8;">
+                            El estándar mundial para proyectos de analítica de datos<br>
+                            Usado por IBM, Microsoft, Google y miles de empresas
+                        </p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin: 40px 0;">
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 40px; border-radius: 50%; width: 150px; height: 150px; margin: 0 auto 20px auto; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🎯</div>
+                            <div style="font-size: 1rem; font-weight: bold;">NEGOCIO</div>
+                        </div>
+                        <h3>1. Entender el Negocio</h3>
+                        <p style="margin-top: 10px; color: #666;">¿Qué problema resolvemos?<br>¿Cuál es el objetivo empresarial?</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 40px; border-radius: 50%; width: 150px; height: 150px; margin: 0 auto 20px auto; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🔍</div>
+                            <div style="font-size: 1rem; font-weight: bold;">EXPLORAR</div>
+                        </div>
+                        <h3>2. Explorar Datos</h3>
+                        <p style="margin-top: 10px; color: #666;">¿Qué datos tenemos?<br>¿Qué calidad tienen?</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 40px; border-radius: 50%; width: 150px; height: 150px; margin: 0 auto 20px auto; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🛠️</div>
+                            <div style="font-size: 1rem; font-weight: bold;">PREPARAR</div>
+                        </div>
+                        <h3>3. Preparar Datos</h3>
+                        <p style="margin-top: 10px; color: #666;">Limpiar y transformar<br>¿Cómo organizamos los datos?</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin: 40px 0;">
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 40px; border-radius: 50%; width: 150px; height: 150px; margin: 0 auto 20px auto; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">📊</div>
+                            <div style="font-size: 1rem; font-weight: bold;">MODELAR</div>
+                        </div>
+                        <h3>4. Modelar</h3>
+                        <p style="margin-top: 10px; color: #666;">Aplicar técnicas analíticas<br>¿Qué patrones encontramos?</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; padding: 40px; border-radius: 50%; width: 150px; height: 150px; margin: 0 auto 20px auto; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">✅</div>
+                            <div style="font-size: 1rem; font-weight: bold;">EVALUAR</div>
+                        </div>
+                        <h3>5. Evaluar</h3>
+                        <p style="margin-top: 10px; color: #666;">¿El modelo funciona?<br>¿Resuelve el problema?</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%); color: white; padding: 40px; border-radius: 50%; width: 150px; height: 150px; margin: 0 auto 20px auto; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🚀</div>
+                            <div style="font-size: 1rem; font-weight: bold;">IMPLEMENTAR</div>
+                        </div>
+                        <h3>6. Implementar</h3>
+                        <p style="margin-top: 10px; color: #666;">Poner en producción<br>¿Cómo monitoreamos?</p>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px;">
+                    <h3 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">💡 ¿Por qué CRISP-DM es tan importante?</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div style="text-align: center;">
+                            <h4 style="color: #667eea;">🌍 Estándar Mundial</h4>
+                            <p style="font-size: 0.9rem; color: #666;">Usado en el 70% de proyectos de analítica globalmente</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <h4 style="color: #667eea;">🔄 Proceso Iterativo</h4>
+                            <p style="font-size: 0.9rem; color: #666;">Puedes volver a pasos anteriores cuando sea necesario</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <h4 style="color: #667eea;">✅ Reduce Fracasos</h4>
+                            <p style="font-size: 0.9rem; color: #666;">Estructura clara que evita errores comunes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Tech Stack -->
+        <div class="slide">
+            <h1>Stack Tecnológico del Curso</h1>
+            <div style="margin: 60px 0;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin: 40px 0;">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 40px; border-radius: 20px;">
+                        <h2 style="color: white; margin-bottom: 30px;">🐍 Lenguajes y Librerías</h2>
+                        <ul style="list-style: none; font-size: 1.1rem;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Python (Lenguaje principal)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">pandas (Manipulación de datos)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">matplotlib & seaborn (Visualización)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">plotly (Gráficos interactivos)</li>
+                            <li style="padding: 8px 0;">scikit-learn (Machine Learning)</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 40px; border-radius: 20px;">
+                        <h2 style="color: white; margin-bottom: 30px;">🛠️ Herramientas</h2>
+                        <ul style="list-style: none; font-size: 1.1rem;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">VSCode + Jupyter Notebooks</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">SQL (PostgreSQL/SQLite)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Power BI Desktop</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">Git & GitHub</li>
+                            <li style="padding: 8px 0;">Streamlit (Demos opcionales)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 40px; border-radius: 20px; text-align: center;">
+                    <h2 style="color: white; margin-bottom: 30px;">🌐 Proyecto: Datos Abiertos Colombia</h2>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 20px;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>datos.gov.co</h4>
+                            <p style="font-size: 0.9rem;">5,000+ datasets</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>Por equipo</h4>
+                            <p style="font-size: 0.9rem;">1 dataset único</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>Libre elección</h4>
+                            <p style="font-size: 0.9rem;">Cualquier sector</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>ML final</h4>
+                            <p style="font-size: 0.9rem;">Predicción o clasificación</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Hands-on Workshop -->
+                    <div class="slide">
+            <div class="practice-section">
+                <div class="practice-title">¡Manos a la Obra!</div>
+                <div style="font-size: 1.5rem; margin-bottom: 30px;">🛠️ Workshop: Exploración de datos.gov.co</div>
+                
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 40px; border-radius: 20px; margin: 40px 0;">
+                    <h2 style="color: white; margin-bottom: 30px;">🎯 Objetivos del Taller</h2>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left;">
+                        <div>
+                            <h3 style="color: white; margin-bottom: 20px;">✅ Lo que harás:</h3>
+                            <ul style="list-style: none; color: white; font-size: 1.1rem;">
+                                <li style="padding: 8px 0;">• Configurar VSCode + Jupyter</li>
+                                <li style="padding: 8px 0;">• Explorar portal datos.gov.co</li>
+                                <li style="padding: 8px 0;">• Aplicar modelo Datos → Información → Conocimiento</li>
+                                <li style="padding: 8px 0;">• Formar equipos y elegir dataset</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="color: white; margin-bottom: 20px;">📊 Resultado esperado:</h3>
+                            <ul style="list-style: none; color: white; font-size: 1.1rem;">
+                                <li style="padding: 8px 0;">• Entorno configurado</li>
+                                <li style="padding: 8px 0;">• Dataset seleccionado por equipo</li>
+                                <li style="padding: 8px 0;">• Primer análisis exploratorio</li>
+                                <li style="padding: 8px 0;">• Plan de proyecto definido</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.3); padding: 25px; border-radius: 15px; font-size: 1.2rem; margin-top: 30px;">
+                    <strong>🌐 Portal: https://www.datos.gov.co/</strong><br>
+                    <div style="margin-top: 15px; font-size: 1rem; opacity: 0.9;">
+                        Trabajaremos en vivo explorando datasets reales del gobierno colombiano
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Summary -->
+        <div class="slide">
+            <h1>Resumen de Hoy</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div>
+                    <h2>🧠 Conceptos Clave:</h2>
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">• Analítica de datos busca el "por qué"</li>
+                            <li style="padding: 6px 0;">• Modelo: Datos → Información → Conocimiento</li>
+                            <li style="padding: 6px 0;">• Enfoque en decisiones empresariales</li>
+                            <li style="padding: 6px 0;">• Proceso CRISP-DM simplificado</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>🎨 Lo que viste:</h2>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">• Casos reales: Netflix, Spotify, Bancolombia</li>
+                            <li style="padding: 6px 0;">• Proyecto MercadoCol completo</li>
+                            <li style="padding: 6px 0;">• Stack tecnológico del curso</li>
+                            <li style="padding: 6px 0;">• Rol real del analista de datos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; display: inline-block;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Tu Misión</h2>
+                    <p style="font-size: 1.2rem;">
+                        En 16 semanas pasarás de datos crudos a insights que impulsen decisiones empresariales.
+                        <br><strong>¡El viaje hacia convertirte en analista inicia ahora! 🚀</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Next Steps -->
+        <div class="slide">
+            <h1>¿Qué viene después?</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div>
+                    <h2>📚 La próxima semana:</h2>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <h3>Python Intermedio para Datos</h3>
+                        <ul style="list-style: none; margin-top: 15px;">
+                            <li style="padding: 5px 0;">• Repaso Python: listas, dicts, funciones</li>
+                            <li style="padding: 5px 0;">• Introducción profunda a pandas</li>
+                            <li style="padding: 5px 0;">• Datos estructurados vs no estructurados</li>
+                            <li style="padding: 5px 0;">• Operaciones básicas con DataFrames</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>🏠 Trabajo independiente:</h2>
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 5px 0;">• Explorar portal datos.gov.co en equipo</li>
+                            <li style="padding: 5px 0;">• Seleccionar y descargar dataset del proyecto</li>
+                            <li style="padding: 5px 0;">• Aplicar modelo Datos→Información→Conocimiento</li>
+                            <li style="padding: 5px 0;">• Definir 5 preguntas de investigación</li>
+                        </ul>
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            <strong>Entregable Semana 2:</strong><br>
+                            Notebook con análisis inicial del dataset elegido + justificación de selección
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.style.display = 'none');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'flex';
+            slides[currentSlide].style.animation = 'fadeInUp 0.6s ease-out';
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            showSlide(currentSlide - 1);  
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+        
+        // Initialize
+        showSlide(0);
+        
+        // Auto-animate elements when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all cards and elements
+        document.querySelectorAll('.professor-card, .objective-item, .feature-card, .concept-element, .comparison-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

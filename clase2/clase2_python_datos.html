@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Intermedio para Datos - Clase 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 40px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .title-slide h2 {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .title-slide .info {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #34495e;
+            margin: 30px 0 20px 0;
+        }
+
+        .objectives-list {
+            display: grid;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .objective-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .objective-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.1);
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .comparison-card {
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .comparison-card.python {
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+            color: white;
+        }
+
+        .comparison-card.numpy {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        .feature-card h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .code-example {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border: 1px solid #4a5568;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            white-space: pre;
+        }
+
+        .code-example .comment {
+            color: #68d391;
+            font-style: italic;
+        }
+
+        .code-example .keyword {
+            color: #f093fb;
+            font-weight: bold;
+        }
+
+        .code-example .string {
+            color: #ffd93d;
+        }
+
+        .code-example .function {
+            color: #4fd1c7;
+        }
+
+        .demo-section {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 25px;
+            margin: 60px 0;
+        }
+
+        .demo-title {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .workshop-section {
+            text-align: center;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 25px;
+            margin: 60px 0;
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+                margin: 20px 0;
+            }
+            
+            .title-slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container">
+        <button class="nav-btn" onclick="previousSlide()">◀ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ▶</button>
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide">
+            <h1>Python Intermedio para Datos</h1>
+            <h2>Clase 2 - Analítica de Datos</h2>
+            <div class="info">
+                <div style="margin-top: 20px;">Julian Eduardo Garzon Giraldo, MsC</div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Agenda de Hoy -->
+        <div class="slide">
+            <h1>🎯 ¿Qué lograremos hoy?</h1>
+            <div style="display: flex; justify-content: space-around; margin: 50px 0; gap: 20px;">
+                <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; width: 300px; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🧠</div>
+                    <h2 style="color: white; margin-bottom: 15px; font-size: 1.3rem;">TEORÍA</h2>
+                    <div style="text-align: left; font-size: 0.85rem;">
+                        <p style="margin: 5px 0;">• Repaso Python esencial</p>
+                        <p style="margin: 5px 0;">• Importancia de NumPy</p>
+                        <p style="margin: 5px 0;">• Herramientas para datos</p>
+                        <p style="margin: 5px 0;">• Tipos de datos</p>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; width: 300px; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">💻</div>
+                    <h2 style="color: white; margin-bottom: 15px; font-size: 1.3rem;">DEMO</h2>
+                    <div style="text-align: left; font-size: 0.85rem;">
+                        <p style="margin: 5px 0;">• Dataset educativo real</p>
+                        <p style="margin: 5px 0;">• Exploración paso a paso</p>
+                        <p style="margin: 5px 0;">• Análisis en vivo</p>
+                        <p style="margin: 5px 0;">• Consejos prácticos</p>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; width: 300px; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🛠️</div>
+                    <h2 style="color: white; margin-bottom: 15px; font-size: 1.3rem;">WORKSHOP</h2>
+                    <div style="text-align: left; font-size: 0.85rem;">
+                        <p style="margin: 5px 0;">• Práctica con datos reales</p>
+                        <p style="margin: 5px 0;">• Ejercicios guiados</p>
+                        <p style="margin: 5px 0;">• Trabajo individual</p>
+                        <p style="margin: 5px 0;">• Presentación de hallazgos</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; margin-top: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: #2c3e50; margin-bottom: 10px;">🎯 Objetivo de la Clase</h3>
+                <p style="color: #666; font-size: 1rem;">
+                    Al final de esta clase sabrás explorar y analizar datasets usando herramientas de Python
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Repaso Python - Intro -->
+        <div class="slide">
+            <h1>🔄 Repaso Python: Lo Esencial para Datos</h1>
+            <div style="margin: 60px 0; text-align: center;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 20px; display: inline-block; margin-bottom: 60px;">
+                    <h2 style="color: white; margin-bottom: 20px;">Solo lo que REALMENTE necesitas para análisis de datos</h2>
+                    <p style="font-size: 1.2rem; opacity: 0.9;">
+                        Vamos a repasar 4 conceptos clave en las siguientes diapositivas
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px;">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 15px;">📋 Listas vs Diccionarios</h3>
+                        <p>Estructuras básicas para organizar datos</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 15px;">🔄 Comprensión de Listas</h3>
+                        <p>Transformar datos de forma eficiente</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 15px;">⚡ Funciones</h3>
+                        <p>Reutilizar lógica de análisis</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 15px;">🔍 Control de Flujo</h3>
+                        <p>Clasificar y categorizar</p>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 60px;">
+                    <h2 style="color: white; margin-bottom: 20px;">⚠️ Pregunta Crítica</h2>
+                    <p style="font-size: 1.3rem; margin-bottom: 20px;">
+                        Si no te sientes 100% cómodo con estos conceptos, <strong>DETÉN TODO</strong>
+                    </p>
+                    <p style="font-size: 1.1rem; opacity: 0.9;">
+                        Pandas asume que dominas Python básico. Sin esta base, el resto será muy difícil.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Listas vs Diccionarios -->
+        <div class="slide">
+            <h1>📋 Listas vs Diccionarios</h1>
+            <div style="margin: 40px 0;">
+                <div class="comparison-grid">
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h2 style="color: white;">📝 LISTAS</h2>
+                        <div class="code-example" style="margin: 20px 0;"><span class="comment"># Lista: orden importa</span>
+ventas = [150000, 200000, 180000]
+
+<span class="comment"># Acceso por índice</span>
+<span class="function">print</span>(ventas[0])    <span class="comment"># 150000</span>
+<span class="function">print</span>(ventas[-1])   <span class="comment"># 180000 (último)</span>
+
+<span class="comment"># Agregar elementos</span>
+ventas.append(220000)</div>
+                        <p style="font-size: 1rem; opacity: 0.9;">
+                            <strong>Uso:</strong> Secuencias ordenadas, series de tiempo, columnas
+                        </p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h2 style="color: white;">🗂️ DICCIONARIOS</h2>
+                        <div class="code-example" style="margin: 20px 0;"><span class="comment"># Diccionario: clave-valor</span>
+cliente = {
+    <span class="string">'nombre'</span>: <span class="string">'Juan'</span>,
+    <span class="string">'edad'</span>: 25,
+    <span class="string">'compras'</span>: 3
+}
+
+<span class="comment"># Acceso por clave</span>
+<span class="function">print</span>(cliente[<span class="string">'nombre'</span>])  <span class="comment"># Juan</span>
+cliente[<span class="string">'ciudad'</span>] = <span class="string">'Bogotá'</span></div>
+                        <p style="font-size: 1rem; opacity: 0.9;">
+                            <strong>Uso:</strong> Registros, filas de datos, metadatos
+                        </p>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px;">
+                    <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">🎯 ¿Cuándo usar cada uno?</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h3 style="color: #0984e3;">📝 Usa LISTAS cuando:</h3>
+                            <ul style="color: #666; margin-top: 15px;">
+                                <li>El orden importa</li>
+                                <li>Tienes elementos del mismo tipo</li>
+                                <li>Representas una columna de datos</li>
+                                <li>Necesitas acceso por posición</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="color: #f5576c;">🗂️ Usa DICCIONARIOS cuando:</h3>
+                            <ul style="color: #666; margin-top: 15px;">
+                                <li>Necesitas etiquetas descriptivas</li>
+                                <li>Representas un registro/fila</li>
+                                <li>Quieres acceso por nombre</li>
+                                <li>Los datos tienen estructura</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Comprensión de Listas -->
+        <div class="slide">
+            <h1>🔄 Comprensión de Listas: Tu Mejor Amigo</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 20px; border-radius: 15px; display: inline-block;">
+                        <h2 style="color: white; margin: 0;">Transformar datos en una sola línea</h2>
+                    </div>
+                </div>
+
+                <div style="margin: 40px 0;">
+                    <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px;">❌ Método Tradicional (Lento y Verboso)</h2>
+                    <div class="code-example"><span class="comment"># Aplicar IVA a una lista de precios</span>
+precios = [100, 200, 150, 300]
+precios_con_iva = []
+
+<span class="keyword">for</span> precio <span class="keyword">in</span> precios:
+    precio_final = precio * 1.19
+    precios_con_iva.append(precio_final)
+
+<span class="function">print</span>(precios_con_iva)  <span class="comment"># [119.0, 238.0, 178.5, 357.0]</span></div>
+                </div>
+
+                <div style="margin: 40px 0;">
+                    <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px;">✅ Comprensión de Lista (Elegante y Rápido)</h2>
+                    <div class="code-example"><span class="comment"># La misma operación en UNA línea</span>
+precios = [100, 200, 150, 300]
+precios_con_iva = [precio * 1.19 <span class="keyword">for</span> precio <span class="keyword">in</span> precios]
+
+<span class="function">print</span>(precios_con_iva)  <span class="comment"># [119.0, 238.0, 178.5, 357.0]</span></div>
+                </div>
+
+                <div style="margin: 40px 0;">
+                    <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px;">🎯 Con Condiciones</h2>
+                    <div class="code-example"><span class="comment"># Solo precios mayores a 150</span>
+precios_altos = [p <span class="keyword">for</span> p <span class="keyword">in</span> precios <span class="keyword">if</span> p > 150]
+<span class="function">print</span>(precios_altos)  <span class="comment"># [200, 300]</span>
+
+<span class="comment"># Categorizar precios</span>
+categorias = [<span class="string">'Alto'</span> <span class="keyword">if</span> p > 200 <span class="keyword">else</span> <span class="string">'Bajo'</span> <span class="keyword">for</span> p <span class="keyword">in</span> precios]
+<span class="function">print</span>(categorias)  <span class="comment"># ['Bajo', 'Bajo', 'Bajo', 'Alto']</span></div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center;">
+                    <h2 style="color: white; margin-bottom: 20px;">💡 ¿Por qué es tan importante?</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">
+                        Pandas usa esta misma lógica internamente. Si entiendes list comprehensions, entenderás pandas.
+                    </p>
+                    <p style="font-size: 1rem; opacity: 0.9;">
+                        <strong>Bonus:</strong> Es hasta 2x más rápido que los bucles tradicionales
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Funciones para Análisis -->
+        <div class="slide">
+            <h1>⚡ Funciones: Reutilizar Lógica de Análisis</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 20px; border-radius: 15px; display: inline-block;">
+                        <h2 style="color: white; margin: 0;">Organiza tu código como un profesional</h2>
+                    </div>
+                </div>
+
+                <div style="margin: 40px 0;">
+                    <h2 style="color: #2c3e50; margin-bottom: 20px;">📊 Función para Análisis de Ventas</h2>
+                    <div class="code-example"><span class="keyword">def</span> <span class="function">analizar_ventas</span>(ventas):
+    <span class="string">"""Función que analiza una lista de ventas"""</span>
+    total = <span class="function">sum</span>(ventas)
+    promedio = total / <span class="function">len</span>(ventas)
+    maximo = <span class="function">max</span>(ventas)
+    minimo = <span class="function">min</span>(ventas)
+    
+    <span class="keyword">return</span> {
+        <span class="string">'total'</span>: total,
+        <span class="string">'promedio'</span>: promedio,
+        <span class="string">'maximo'</span>: maximo,
+        <span class="string">'minimo'</span>: minimo
+    }
+
+<span class="comment"># Usar la función</span>
+ventas_enero = [100000, 200000, 150000, 300000]
+resultado = <span class="function">analizar_ventas</span>(ventas_enero)
+<span class="function">print</span>(resultado)</div>
+                </div>
+
+                <div style="margin: 40px 0;">
+                    <h2 style="color: #2c3e50; margin-bottom: 20px;">💰 Función para Categorizar Clientes</h2>
+                    <div class="code-example"><span class="keyword">def</span> <span class="function">categorizar_cliente</span>(compras_anuales):
+    <span class="string">"""Clasifica clientes según sus compras"""</span>
+    <span class="keyword">if</span> compras_anuales > 1000000:
+        <span class="keyword">return</span> <span class="string">"VIP"</span>
+    <span class="keyword">elif</span> compras_anuales > 500000:
+        <span class="keyword">return</span> <span class="string">"Premium"</span>
+    <span class="keyword">elif</span> compras_anuales > 100000:
+        <span class="keyword">return</span> <span class="string">"Regular"</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> <span class="string">"Básico"</span>
+
+<span class="comment"># Aplicar a múltiples clientes</span>
+clientes = [120000, 800000, 50000, 1500000]
+categorias = [<span class="function">categorizar_cliente</span>(c) <span class="keyword">for</span> c <span class="keyword">in</span> clientes]
+<span class="function">print</span>(categorias)  <span class="comment"># ['Regular', 'Premium', 'Básico', 'VIP']</span></div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px;">
+                    <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">🎯 ¿Por qué usar funciones?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div style="text-align: center;">
+                            <h3 style="color: #e17055;">🔄 Reutilización</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Escribe una vez, usa muchas veces</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <h3 style="color: #e17055;">🧹 Código Limpio</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Organiza lógica compleja</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <h3 style="color: #e17055;">🐛 Menos Errores</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Lógica centralizada y testeable</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: ¿Por qué NumPy? -->
+        <div class="slide">
+            <h1>🚀 ¿Por qué NumPy? El Poder de la Vectorización</h1>
+            <div style="margin: 40px 0;">
+                <div class="comparison-grid">
+                    <div class="comparison-card python">
+                        <h2>🐌 Python Puro</h2>
+                        <div class="code-example" style="text-align: left; margin: 20px 0;"><span class="keyword">import</span> time
+
+<span class="comment"># Lista Python normal</span>
+numeros = <span class="function">list</span>(<span class="function">range</span>(1000000))
+
+start = time.time()
+resultado = [x * 2 <span class="keyword">for</span> x <span class="keyword">in</span> numeros]
+tiempo_python = time.time() - start
+
+<span class="function">print</span>(<span class="string">f"Python: {tiempo_python:.4f} segundos"</span>)</div>
+                        <ul style="list-style: none; text-align: left; margin-top: 20px;">
+                            <li style="padding: 5px 0;">❌ Lento para operaciones matemáticas</li>
+                            <li style="padding: 5px 0;">❌ Usa mucha memoria</li>
+                            <li style="padding: 5px 0;">❌ Bucles explícitos</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="comparison-card numpy">
+                        <h2>⚡ NumPy</h2>
+                        <div class="code-example" style="text-align: left; margin: 20px 0;"><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> time
+
+<span class="comment"># Array NumPy</span>
+numeros = np.arange(1000000)
+
+start = time.time()
+resultado = numeros * 2  <span class="comment"># ¡Vectorización!</span>
+tiempo_numpy = time.time() - start
+
+<span class="function">print</span>(<span class="string">f"NumPy: {tiempo_numpy:.4f} segundos"</span>)</div>
+                        <ul style="list-style: none; text-align: left; margin-top: 20px;">
+                            <li style="padding: 5px 0;">✅ Hasta 100x más rápido</li>
+                            <li style="padding: 5px 0;">✅ Menos memoria</li>
+                            <li style="padding: 5px 0;">✅ Operaciones vectorizadas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px;">
+                    <h2 style="color: #2c3e50; text-align: center; margin-bottom: 30px;">🔢 Arrays: La Base de Todo</h2>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+                        <div>
+                            <h3 style="color: #667eea;">Creación de Arrays</h3>
+                            <div class="code-example"><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Desde lista</span>
+arr = np.array([1, 2, 3, 4, 5])
+
+<span class="comment"># Rangos</span>
+rangos = np.arange(0, 100, 5)  <span class="comment"># 0 a 100, paso 5</span>
+
+<span class="comment"># Zeros y ones</span>
+zeros = np.zeros(1000)
+ones = np.ones((3, 4))  <span class="comment"># matriz 3x4</span></div>
+                        </div>
+                        <div>
+                            <h3 style="color: #667eea;">Operaciones Básicas</h3>
+                            <div class="code-example"><span class="comment"># Operaciones elemento por elemento</span>
+precios = np.array([100, 200, 150])
+con_iva = precios * 1.19
+descuento = precios * 0.8
+
+<span class="comment"># Estadísticas instantáneas</span>
+<span class="function">print</span>(precios.mean())  <span class="comment"># promedio</span>
+<span class="function">print</span>(precios.std())   <span class="comment"># desviación estándar</span>
+<span class="function">print</span>(precios.sum())   <span class="comment"># suma total</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h2 style="color: white; margin-bottom: 20px;">💡 ¿Por qué esto importa para análisis?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>⚡ Velocidad</h4>
+                            <p style="font-size: 0.9rem;">Procesar millones de registros en segundos</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>📊 Pandas Base</h4>
+                            <p style="font-size: 0.9rem;">Pandas está construido sobre NumPy</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>🧮 Matemáticas</h4>
+                            <p style="font-size: 0.9rem;">Estadísticas y cálculos avanzados</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Pandas - La Navaja Suiza -->
+        <div class="slide">
+            <h1>🐼 Pandas: La Navaja Suiza de los Datos</h1>
+            <div style="margin: 40px 0;">
+                <!-- Header con introducción -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 20px; display: inline-block;">
+                        <h2 style="color: white; margin-bottom: 15px;">🎯 La herramienta #1 para análisis de datos</h2>
+                        <p style="font-size: 1.2rem; opacity: 0.9;">
+                            Si solo aprendes una librería en tu carrera, que sea pandas
+                        </p>
+                    </div>
+                </div>
+        
+                <!-- Sección 1: Conceptos Fundamentales -->
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 40px;">
+                    <h2 style="color: #2c3e50; text-align: center; margin-bottom: 30px;">📊 Conceptos Fundamentales</h2>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+                        <!-- Series vs DataFrame -->
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px;">
+                            <h3 style="color: white; margin-bottom: 15px;">📈 Series vs DataFrame</h3>
+                            <div class="code-example" style="margin: 15px 0; font-size: 0.85rem;"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+        
+        <span class="comment"># Series: una columna</span>
+        precios = pd.Series([100, 200, 150], 
+                           name=<span class="string">'precio'</span>)
+        
+        <span class="comment"># DataFrame: tabla completa</span>
+        df = pd.DataFrame({
+            <span class="string">'producto'</span>: [<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>],
+            <span class="string">'precio'</span>: [100, 200, 150],
+            <span class="string">'stock'</span>: [50, 30, 80]
+        })</div>
+                            <p style="font-size: 0.9rem; opacity: 0.9;">
+                                <strong>📌 Analogía:</strong> Series = columna Excel, DataFrame = hoja completa
+                            </p>
+                        </div>
+        
+                        <!-- El Poder del Index -->
+                        <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 12px;">
+                            <h3 style="color: white; margin-bottom: 15px;">🔑 El Poder del Index</h3>
+                            <div class="code-example" style="margin: 15px 0; font-size: 0.85rem;"><span class="comment"># Index por defecto</span>
+        df.index  <span class="comment"># RangeIndex(0, 1, 2...)</span>
+        
+        <span class="comment"># Cambiar index por fecha</span>
+        df.set_index(<span class="string">'fecha'</span>, inplace=<span class="keyword">True</span>)
+        
+        <span class="comment"># Acceso súper eficiente</span>
+        df[<span class="string">'2024-03'</span>]  <span class="comment"># todo marzo</span>
+        df.resample(<span class="string">'M'</span>).mean()  <span class="comment"># promedio mensual</span></div>
+                            <p style="font-size: 0.9rem; opacity: 0.9;">
+                                <strong>📌 Clave:</strong> Un buen index = código elegante y rápido
+                            </p>
+                        </div>
+                    </div>
+                </div>
+        
+        <!-- Sección 2: Operaciones Esenciales -->
+        <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 30px; border-radius: 15px; margin-bottom: 40px;">
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 30px;">🛠️ Operaciones Esenciales</h2>
+            
+            <!-- Paso 1: Cargar Datos -->
+            <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                <h3 style="color: #f5576c; margin-bottom: 15px;">📂 Paso 1: Cargar Datos</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="code-example" style="font-size: 0.85rem;"><span class="comment"># CSV (más común)</span>
+df = pd.read_csv(<span class="string">'datos.csv'</span>)
+
+<span class="comment"># Excel</span>
+df = pd.read_excel(<span class="string">'datos.xlsx'</span>, sheet_name=<span class="string">'Ventas'</span>)</div>
+                    <div class="code-example" style="font-size: 0.85rem;"><span class="comment"># Con opciones para datos latinos</span>
+df = pd.read_csv(<span class="string">'datos.csv'</span>,
+                 encoding=<span class="string">'utf-8'</span>,
+                 sep=<span class="string">';'</span>,           <span class="comment"># separador punto y coma</span>
+                 decimal=<span class="string">','</span>)       <span class="comment"># decimal con coma</span></div>
+                </div>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 15px; text-align: center;">
+                    💡 <strong>Tip:</strong> 70% del tiempo peleas con encodings y separadores
+                </p>
+            </div>
+
+            <!-- Paso 2: Explorar -->
+            <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                <h3 style="color: #0984e3; margin-bottom: 15px;">🔍 Paso 2: Explorar (Los "Big 3")</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="code-example" style="font-size: 0.85rem;"><span class="comment"># SIEMPRE empieza con estos tres:</span>
+df.<span class="function">head</span>()     <span class="comment"># Ver primeras 5 filas</span>
+df.<span class="function">info</span>()     <span class="comment"># Información general: tipos, nulls, memoria</span>
+df.<span class="function">describe</span>() <span class="comment"># Estadísticas: mean, std, min, max</span></div>
+                    <div class="code-example" style="font-size: 0.85rem;"><span class="comment"># Información adicional útil</span>
+df.shape      <span class="comment"># (número_filas, número_columnas)</span>
+df.columns    <span class="comment"># Lista de nombres de columnas</span>
+df.dtypes     <span class="comment"># Tipos de datos por columna</span>
+df.isnull().sum()  <span class="comment"># Contar valores nulos</span></div>
+                </div>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 15px; text-align: center;">
+                    💡 <strong>Pro tip:</strong> Estos 3 métodos te dicen el 80% de lo que necesitas saber
+                </p>
+            </div>
+
+            <!-- Paso 3: Seleccionar Datos -->
+            <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">🎯 Paso 3: Seleccionar Datos (Indexing)</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="code-example" style="font-size: 0.85rem;"><span class="comment"># Seleccionar columnas</span>
+df[<span class="string">'precio'</span>]                  <span class="comment"># Una columna</span>
+df[[<span class="string">'producto'</span>, <span class="string">'precio'</span>]]    <span class="comment"># Múltiples columnas</span>
+
+<span class="comment"># Seleccionar filas por posición</span>
+df.iloc[0]                     <span class="comment"># Primera fila</span>
+df.iloc[0:5]                   <span class="comment"># Primeras 5 filas</span>
+df.iloc[-5:]                   <span class="comment"># Últimas 5 filas</span></div>
+                    <div class="code-example" style="font-size: 0.85rem;"><span class="comment"># Seleccionar por condición</span>
+df.loc[df[<span class="string">'precio'</span>] > 100]     <span class="comment"># Filas donde precio > 100</span>
+
+<span class="comment"># Combinar filas y columnas</span>
+df.loc[df[<span class="string">'precio'</span>] > 100, [<span class="string">'producto'</span>, <span class="string">'stock'</span>]]
+
+<span class="comment"># Múltiples condiciones</span>
+df[(df[<span class="string">'precio'</span>] > 100) & (df[<span class="string">'stock'</span>] < 50)]</div>
+                </div>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 15px; text-align: center;">
+                    💡 <strong>Regla de oro:</strong> .iloc para posición, .loc para etiquetas/condiciones
+                </p>
+            </div>
+
+            <!-- Paso 4: Operaciones Básicas -->
+            <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="color: #00b894; margin-bottom: 15px;">⚡ Paso 4: Operaciones Básicas</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="code-example" style="font-size: 0.85rem;"><span class="comment"># Filtrar y ordenar</span>
+ventas_altas = df[df[<span class="string">'ventas'</span>] > 100000]
+df.sort_values(<span class="string">'precio'</span>, ascending=<span class="keyword">False</span>)
+
+<span class="comment"># Agrupar y calcular</span>
+df.groupby(<span class="string">'categoria'</span>)[<span class="string">'ventas'</span>].sum()
+df.groupby(<span class="string">'categoria'</span>).agg({
+    <span class="string">'ventas'</span>: <span class="string">'sum'</span>,
+    <span class="string">'precio'</span>: <span class="string">'mean'</span>
+})</div>
+                    <div class="code-example" style="font-size: 0.85rem;"><span class="comment"># Crear nuevas columnas</span>
+df[<span class="string">'precio_iva'</span>] = df[<span class="string">'precio'</span>] * 1.19
+df[<span class="string">'ganancia'</span>] = df[<span class="string">'ventas'</span>] - df[<span class="string">'costos'</span>]
+
+<span class="comment"># Estadísticas rápidas</span>
+df[<span class="string">'precio'</span>].mean()   <span class="comment"># promedio</span>
+df[<span class="string">'precio'</span>].sum()    <span class="comment"># suma total</span>
+df[<span class="string">'precio'</span>].value_counts()  <span class="comment"># frecuencias</span></div>
+                </div>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 15px; text-align: center;">
+                    💡 <strong>Siguiente nivel:</strong> Combina estas operaciones para análisis complejos
+                </p>
+            </div>
+        </div>
+        
+                <!-- Sección 3: ¿Qué hace Pandas? -->
+                <div style="display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: center; margin-bottom: 40px;">
+                    <div style="text-align: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Pandas_logo.svg/1200px-Pandas_logo.svg.png" 
+                             alt="Pandas Logo" 
+                             style="max-width: 200px; height: auto; margin-bottom: 15px;">
+                        <p style="color: #666; font-style: italic; font-size: 1rem;">
+                            <strong>Como una navaja suiza:</strong><br>
+                            Una herramienta, mil funciones
+                        </p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h3 style="color: white; margin-bottom: 20px; text-align: center;">🚀 ¿Qué puedes hacer con Pandas?</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                                <strong>📂 Cargar Datos</strong>
+                                <p style="font-size: 0.85rem; margin-top: 5px;">CSV, Excel, SQL, JSON, APIs</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                                <strong>🧹 Limpiar</strong>
+                                <p style="font-size: 0.85rem; margin-top: 5px;">Nulls, duplicados, outliers</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                                <strong>🔄 Transformar</strong>
+                                <p style="font-size: 0.85rem; margin-top: 5px;">Reshape, merge, pivot</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                                <strong>📊 Analizar</strong>
+                                <p style="font-size: 0.85rem; margin-top: 5px;">Groupby, estadísticas, correlaciones</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Pro Tips Final -->
+                <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 25px; border-radius: 15px; text-align: center;">
+                    <h3 style="color: white; margin-bottom: 15px;">💡 Pro Tips para Dominar Pandas</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                            <strong>📚 Regla 80/20</strong>
+                            <p style="font-size: 0.85rem;">20% de métodos resuelven 80% de problemas</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                            <strong>🎯 .loc vs .iloc</strong>
+                            <p style="font-size: 0.85rem;">.iloc = posición<br>.loc = etiquetas/condiciones</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                            <strong>⚡ Vectorización</strong>
+                            <p style="font-size: 0.85rem;">Evita bucles, usa operaciones vectorizadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Datos Estructurados vs No Estructurados -->
+        <div class="slide">
+            <h1>📋 Datos Estructurados: La Base del Análisis</h1>
+            <div style="margin: 40px 0;">
+                <div class="comparison-grid">
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h2>✅ Datos ESTRUCTURADOS</h2>
+                        <div style="margin: 20px 0;">
+                            <h3 style="color: white; margin-bottom: 15px;">Características:</h3>
+                            <ul style="list-style: none; text-align: left;">
+                                <li style="padding: 5px 0;">• Formato fijo y predecible</li>
+                                <li style="padding: 5px 0;">• Filas y columnas definidas</li>
+                                <li style="padding: 5px 0;">• Fácil de consultar y analizar</li>
+                                <li style="padding: 5px 0;">• Perfecto para pandas</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                            <h4 style="color: white;">Ejemplos:</h4>
+                            <p style="font-size: 0.9rem;">CSV, Excel, bases de datos SQL, tablas</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h2>❌ Datos NO ESTRUCTURADOS</h2>
+                        <div style="margin: 20px 0;">
+                            <h3 style="color: white; margin-bottom: 15px;">Características:</h3>
+                            <ul style="list-style: none; text-align: left;">
+                                <li style="padding: 5px 0;">• Sin formato fijo</li>
+                                <li style="padding: 5px 0;">• Difícil de analizar directamente</li>
+                                <li style="padding: 5px 0;">• Requiere procesamiento previo</li>
+                                <li style="padding: 5px 0;">• Pandas NO es la mejor herramienta</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                            <h4 style="color: white;">Ejemplos:</h4>
+                            <p style="font-size: 0.9rem;">Texto, imágenes, audio, videos, PDFs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h2 style="color: white; margin-bottom: 20px;">🎯 Nuestro Enfoque en el Curso</h2>
+                    <p style="font-size: 1.3rem; margin-bottom: 20px;">
+                        Nos enfocaremos 95% en <strong>datos estructurados</strong>
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>✅ Por qué</h4>
+                            <p style="font-size: 0.9rem;">Es donde harás el 80% de tu trabajo como analista</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                            <h4>🛠️ Herramientas</h4>
+                            <p style="font-size: 0.9rem;">Pandas está diseñado exactamente para esto</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Demo en Vivo -->
+        <div class="slide">
+            <div class="demo-section">
+                <div class="demo-title">💻 Demo en Vivo</div>
+                <div style="font-size: 1.5rem; margin-bottom: 40px;">Estadísticas de Educación en Colombia</div>
+                
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 40px; border-radius: 20px; margin: 40px 0;">
+                    <h2 style="color: white; margin-bottom: 30px;">📊 Dataset: MEN Estadísticas en Educación Preescolar, Básica y Media</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-bottom: 40px;">
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">📈 Información del Dataset</h3>
+                            <ul style="list-style: none; color: white; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• Período: 2011 - 2022 (12 años)</li>
+                                <li style="padding: 5px 0;">• Nivel: Por municipio</li>
+                                <li style="padding: 5px 0;">• Fuente: Ministerio de Educación</li>
+                                <li style="padding: 5px 0;">• Datos oficiales del gobierno</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">📋 Indicadores principales</h3>
+                            <ul style="list-style: none; color: white; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• Tasas de cobertura (bruta y neta)</li>
+                                <li style="padding: 5px 0;">• Tasas de aprobación</li>
+                                <li style="padding: 5px 0;">• Tasas de deserción</li>
+                                <li style="padding: 5px 0;">• Tasas de reprobación</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: left;">
+                        <h3 style="color: white; margin-bottom: 20px;">🎯 Lo que verás en vivo</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px;">
+                            <div>
+                                <h4 style="color: white;">📂 Carga y Exploración</h4>
+                                <ul style="list-style: none; color: white; font-size: 1rem;">
+                                    <li style="padding: 3px 0;">• Descargar desde datos.gov.co</li>
+                                    <li style="padding: 3px 0;">• Cargar con pandas</li>
+                                    <li style="padding: 3px 0;">• Los "Big 3": head(), info(), describe()</li>
+                                    <li style="padding: 3px 0;">• Entender estructura del dataset</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: white;">🔍 Análisis Inicial</h4>
+                                <ul style="list-style: none; color: white; font-size: 1rem;">
+                                    <li style="padding: 3px 0;">• ¿Qué municipio tiene mejor cobertura?</li>
+                                    <li style="padding: 3px 0;">• ¿Cómo evoluciona la deserción?</li>
+                                    <li style="padding: 3px 0;">• Comparar departamentos</li>
+                                    <li style="padding: 3px 0;">• Detectar datos faltantes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.3); padding: 25px; border-radius: 15px; font-size: 1.2rem; margin-top: 30px;">
+                    <strong>⚡ Interactivo: ¡Pregunta lo que necesites!</strong><br>
+                    <div style="margin-top: 15px; font-size: 1rem; opacity: 0.9;">
+                        Datos reales = problemas reales. Vamos a resolverlos juntos.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Workshop -->
+        <div class="slide">
+            <div class="workshop-section">
+                <div style="font-size: 3rem; margin-bottom: 30px;">🛠️ Workshop</div>
+                <div style="font-size: 1.5rem; margin-bottom: 40px;">Manos a la Obra: Análisis de Becas Educativas</div>
+                
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 40px; border-radius: 20px; margin: 40px 0;">
+                    <h2 style="color: white; margin-bottom: 30px;">🎓 Dataset: Beneficiarios de Becas y Créditos - Educación Superior</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-bottom: 40px;">
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">📊 Información del Dataset</h3>
+                            <ul style="list-style: none; color: white; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• Fuente: Ministerio de Educación</li>
+                                <li style="padding: 5px 0;">• Beneficiarios de programas educativos</li>
+                                <li style="padding: 5px 0;">• Becas y créditos educativos</li>
+                                <li style="padding: 5px 0;">• Datos actualizados regularmente</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.3); padding: 25px; border-radius: 15px;">
+                            <h3 style="color: white; margin-bottom: 15px;">📋 Variables principales</h3>
+                            <ul style="list-style: none; color: white; font-size: 1rem;">
+                                <li style="padding: 5px 0;">• Tipo de programa (beca/crédito)</li>
+                                <li style="padding: 5px 0;">• Departamento y municipio</li>
+                                <li style="padding: 5px 0;">• Institución educativa</li>
+                                <li style="padding: 5px 0;">• Nivel educativo</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: left;">
+                        <h3 style="color: white; margin-bottom: 20px;">📋 Ejercicios</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+                            <div>
+                                <h4 style="color: white;">Ejercicio 1: Exploración</h4>
+                                <ul style="list-style: none; font-size: 1rem;">
+                                    <li style="padding: 3px 0;">• Descargar y cargar el dataset</li>
+                                    <li style="padding: 3px 0;">• Aplicar head(), info(), describe()</li>
+                                    <li style="padding: 3px 0;">• Identificar tipos de programas</li>
+                                </ul>
+                                
+                                <h4 style="color: white; margin-top: 20px;">Ejercicio 2: Análisis</h4>
+                                <ul style="list-style: none; font-size: 1rem;">
+                                    <li style="padding: 3px 0;">• ¿Qué departamento tiene más becas?</li>
+                                    <li style="padding: 3px 0;">• ¿Cuál es el programa más popular?</li>
+                                    <li style="padding: 3px 0;">• Distribución por nivel educativo</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: white;">Ejercicio 3: Filtrado</h4>
+                                <ul style="list-style: none; font-size: 1rem;">
+                                    <li style="padding: 3px 0;">• Filtrar por tu departamento</li>
+                                    <li style="padding: 3px 0;">• Comparar universidades públicas vs privadas</li>
+                                    <li style="padding: 3px 0;">• Crear ranking de instituciones</li>
+                                </ul>
+                                
+                                <h4 style="color: white; margin-top: 20px;">Ejercicio 4: Insights</h4>
+                                <ul style="list-style: none; font-size: 1rem;">
+                                    <li style="padding: 3px 0;">• Encontrar 1 insight de política pública</li>
+                                    <li style="padding: 3px 0;">• Preparar recomendación</li>
+                                    <li style="padding: 3px 0;">• Compartir con la clase</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.3); padding: 25px; border-radius: 15px; font-size: 1.2rem; margin-top: 30px;">
+                    <strong>🎯 Objetivo: Analizar datos reales de política educativa colombiana</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Para Casa -->
+        <div class="slide">
+            <h1>🏠 Trabajo en Casa</h1>
+            <div style="margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 20px;">📚 Refuerza lo Aprendido</h2>
+                    <p style="font-size: 1.3rem; margin-bottom: 30px;">
+                        Practica con más datasets para afianzar los conceptos
+                    </p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>📂 Completar Ejercicios</h3>
+                        <p>Termina los ejercicios no completados del workshop</p>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <li>• Finalizar análisis del dataset de becas</li>
+                            <li>• Documentar código con comentarios</li>
+                            <li>• Resolver errores pendientes</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🌐 Explorar datos.gov.co</h3>
+                        <p>Familiarízate con el portal de datos abiertos</p>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <li>• Navegar por diferentes categorías</li>
+                            <li>• Descargar 2-3 datasets pequeños</li>
+                            <li>• Aplicar la misma metodología de exploración</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>💡 Formular Preguntas</h3>
+                        <p>Desarrolla tu pensamiento analítico</p>
+                        <ul style="list-style: none; text-align: left; margin-top: 15px; font-size: 0.9rem;">
+                            <li>• Crear preguntas específicas para cada dataset</li>
+                            <li>• Pensar como un analista de negocio</li>
+                            <li>• Conectar datos con decisiones empresariales</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px; text-align: center;">
+                    <h2 style="color: #2c3e50; margin-bottom: 20px;">🎯 El Objetivo</h2>
+                    <p style="color: #666; font-size: 1.2rem; line-height: 1.6;">
+                        Que llegues a la próxima clase sintiendo confianza al explorar cualquier dataset. 
+                        <strong>La práctica hace al maestro.</strong>
+                    </p>
+                    <div style="margin-top: 25px; padding: 20px; background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; border-radius: 10px; display: inline-block;">
+                        <strong>💪 Recuerda:</strong> Cada dataset que explores te hace mejor analista
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Próxima Semana -->
+        <div class="slide">
+            <h1>🔮 Próxima Semana: Manipulación de Datos</h1>
+            <div style="margin: 40px 0;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 20px; display: inline-block;">
+                        <h2 style="color: white; margin-bottom: 15px;">📊 Clase 3: Manipulación de Datos con Pandas</h2>
+                        <p style="font-size: 1.2rem; opacity: 0.9;">
+                            Aprenderás a <strong>limpiar y transformar</strong> datos reales
+                        </p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px;">
+                    <div>
+                        <h2>🧹 Limpieza de Datos</h2>
+                        <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                            <ul style="list-style: none;">
+                                <li style="padding: 6px 0;">• Detectar y manejar valores nulos</li>
+                                <li style="padding: 6px 0;">• Eliminar duplicados</li>
+                                <li style="padding: 6px 0;">• Corregir tipos de datos</li>
+                                <li style="padding: 6px 0;">• Normalizar texto y formatos</li>
+                                <li style="padding: 6px 0;">• Manejo de outliers</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>⚡ Transformaciones</h2>
+                        <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                            <ul style="list-style: none;">
+                                <li style="padding: 6px 0;">• Crear nuevas columnas calculadas</li>
+                                <li style="padding: 6px 0;">• Operaciones groupby avanzadas</li>
+                                <li style="padding: 6px 0;">• Pivot tables y crosstabs</li>
+                                <li style="padding: 6px 0;">• Concat y merge de datasets</li>
+                                <li style="padding: 6px 0;">• Reshaping de datos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px; text-align: center;">
+                    <h2 style="color: #2c3e50; margin-bottom: 20px;">💡 ¿Por qué es tan importante?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div>
+                            <h3 style="color: #667eea;">⏰ 80% del Tiempo</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Los analistas pasan el 80% del tiempo limpiando datos</p>
+                        </div>
+                        <div>
+                            <h3 style="color: #667eea;">🎯 Datos Reales</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Los datos del mundo real SIEMPRE vienen sucios</p>
+                        </div>
+                        <div>
+                            <h3 style="color: #667eea;">📊 Base del Análisis</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Datos limpios = análisis confiables</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+                    <h2 style="color: white; margin-bottom: 15px;">🚀 Tu Evolución</h2>
+                    <p style="font-size: 1.2rem;">
+                        <strong>Hoy:</strong> Explorar datos básicos → <strong>Próxima semana:</strong> Limpiar y transformar datos profesionalmente
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Resumen -->
+        <div class="slide">
+            <h1>📋 Resumen de Hoy</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div>
+                    <h2>🧠 Conceptos Teóricos:</h2>
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">✅ Python esencial para datos</li>
+                            <li style="padding: 6px 0;">✅ NumPy: vectorización y velocidad</li>
+                            <li style="padding: 6px 0;">✅ Pandas: Series vs DataFrame</li>
+                            <li style="padding: 6px 0;">✅ Datos estructurados vs no estructurados</li>
+                            <li style="padding: 6px 0;">✅ El poder del Index en pandas</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>💻 Habilidades Prácticas:</h2>
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 6px 0;">✅ read_csv() con opciones</li>
+                            <li style="padding: 6px 0;">✅ Los "Big 3": head(), info(), describe()</li>
+                            <li style="padding: 6px 0;">✅ Indexing: .loc vs .iloc</li>
+                            <li style="padding: 6px 0;">✅ Filtrado básico con condiciones</li>
+                            <li style="padding: 6px 0;">✅ Groupby y estadísticas básicas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 30px; border-radius: 15px; display: inline-block;">
+                    <h2 style="color: white; margin-bottom: 15px;">🎯 Lo Más Importante</h2>
+                    <p style="font-size: 1.3rem; margin: 0;">
+                        Ahora puedes <strong>explorar cualquier dataset</strong> y extraer insights básicos.<br>
+                        <span style="font-size: 1.1rem; opacity: 0.9;">¡Esa es la base de todo analista exitoso! 🚀</span>
+                    </p>
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin-top: 40px; text-align: center;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">📝 Recuerda</h3>
+                <p style="color: #666; font-size: 1.1rem;">
+                    Practica con tus propios datasets esta semana. La única forma de dominar pandas es <strong>usándolo</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.style.display = 'none');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'flex';
+            slides[currentSlide].style.animation = 'fadeInUp 0.6s ease-out';
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            showSlide(currentSlide - 1);  
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+        
+        // Initialize
+        showSlide(0);
+        
+        // Auto-animate elements when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all cards and elements
+        document.querySelectorAll('.feature-card, .comparison-card, .objective-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
